@@ -12,6 +12,17 @@ export default defineEventHandler(async (event) => {
     }
 
     try {
+        const existingUser = await db.user.findUnique({
+            where: { id: parseInt(id) }
+        })
+
+        if (existingUser?.account === 'system' && role !== 'root') {
+            throw createError({
+                statusCode: 403,
+                statusMessage: 'Cannot change root administrator role'
+            })
+        }
+
         const user = await db.user.update({
             where: { id: parseInt(id) },
             data: {

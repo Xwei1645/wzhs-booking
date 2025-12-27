@@ -6,21 +6,21 @@ export default defineNitroPlugin(async (nitroApp) => {
         const userCount = await db.user.count()
 
         if (userCount === 0) {
-            console.log('No users found. Creating default super admin...')
+            console.log('No users found. Creating default root admin...')
 
             const hashedPassword = await bcrypt.hash('admin123456', 10)
 
             await db.user.create({
                 data: {
-                    account: 'admin',
+                    account: 'system',
                     password: hashedPassword,
-                    name: '初始超管',
-                    role: 'super_admin',
+                    name: '根管理员',
+                    role: 'root',
                     status: true
                 }
             })
 
-            console.log('Default super admin created: admin / admin123456')
+            console.log('Default root admin created: system / admin123456')
         }
     } catch (error) {
         console.error('Failed to initialize database:', error)

@@ -12,6 +12,17 @@ export default defineEventHandler(async (event) => {
     }
 
     try {
+        const user = await db.user.findUnique({
+            where: { id: parseInt(id) }
+        })
+
+        if (user?.account === 'system') {
+            throw createError({
+                statusCode: 403,
+                statusMessage: 'Cannot delete root administrator'
+            })
+        }
+
         await db.user.delete({
             where: { id: parseInt(id) }
         })

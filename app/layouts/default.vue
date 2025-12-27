@@ -117,7 +117,7 @@ const userInfo = useCookie<any>('userInfo');
 
 const isAdmin = computed(() => {
   const role = userInfo.value?.role;
-  return role === 'admin' || role === 'super_admin';
+  return ['root', 'super_admin', 'admin'].includes(role);
 });
 
 // 个人信息逻辑
@@ -158,6 +158,7 @@ const passwordRules: any = {
 
 const getRoleName = (role: string) => {
   const map: Record<string, string> = {
+    root: '根管理员',
     super_admin: '超级管理员',
     admin: '管理员',
     user: '普通用户',

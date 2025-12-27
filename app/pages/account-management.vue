@@ -63,14 +63,12 @@
           <t-input v-model="formData.password" type="password" placeholder="请输入初始密码" />
         </t-form-item>
         <t-form-item label="角色权限" name="role">
-          <t-select v-model="formData.role" placeholder="请选择角色" :disabled="isSuperAdminRole">
+          <t-select v-model="formData.role" placeholder="请选择角色" :disabled="isRootUser">
             <t-option label="普通用户" value="user" />
             <t-option label="管理员" value="admin" />
             <t-option label="超级管理员" value="super_admin" />
+            <t-option v-if="isRootUser" label="根管理员" value="root" />
           </t-select>
-          <div v-if="isSuperAdminRole" style="font-size: 12px; color: var(--td-text-color-placeholder); margin-top: 4px;">
-            超级管理员权限不可修改
-          </div>
         </t-form-item>
         <t-form-item label="所属组织" name="organizationIds">
           <t-select v-model="formData.organizationIds" multiple placeholder="请选择组织">
@@ -156,6 +154,7 @@ const pagination = reactive({
 
 const getRoleName = (role: string) => {
   const map: Record<string, string> = {
+    root: '根管理员',
     super_admin: '超级管理员',
     admin: '管理员',
     user: '普通用户',
@@ -164,6 +163,7 @@ const getRoleName = (role: string) => {
 };
 
 const getRoleTheme = (role: string) => {
+  if (role === 'root') return 'primary';
   if (role === 'super_admin') return 'danger';
   if (role === 'admin') return 'warning';
   return 'default';
@@ -173,7 +173,7 @@ const getRoleTheme = (role: string) => {
 const dialogVisible = ref(false);
 const isEdit = ref(false);
 const dialogTitle = computed(() => isEdit.value ? '编辑用户' : '新增用户');
-const isSuperAdminRole = computed(() => isEdit.value && formData.role === 'super_admin');
+const isRootUser = computed(() => isEdit.value && formData.account === 'system');
 const formData = reactive({
   id: null as number | null,
   account: '',
@@ -294,8 +294,8 @@ const onResetSubmit = async ({ validateResult, firstError }: any) => {
 };
 
 const handleDelete = async (row: any) => {
-  if (row.id === 1) {
-    MessagePlugin.warning('系统默认超级管理员不能删除');
+  if (row.account === 'system') {
+    MessagePlugin.warning('根管理员不能删除');
     return;
   }
   const confirmDialog = DialogPlugin.confirm({
