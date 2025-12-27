@@ -128,7 +128,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, watch } from 'vue';
+import { ref, reactive, computed, watch, onMounted } from 'vue';
 import { MessagePlugin, type PrimaryTableCol, type FormRules } from 'tdesign-vue-next';
 
 // 表格列定义
@@ -144,7 +144,13 @@ const columns: PrimaryTableCol[] = [
 
 // 获取预约列表
 const { data: bookings, refresh: refreshBookings } = await useFetch<any[]>('/api/bookings', {
+  key: 'user-bookings',
   headers: useRequestHeaders(['cookie'])
+});
+
+onMounted(() => {
+  refreshBookings();
+  refreshUser();
 });
 
 const bookingData = computed(() => {
@@ -164,7 +170,8 @@ const bookingData = computed(() => {
 });
 
 // 使用 useFetch 获取最新用户信息，确保服务端和客户端都能获取到数据
-const { data: userData } = await useFetch<any>('/api/auth/me', {
+const { data: userData, refresh: refreshUser } = await useFetch<any>('/api/auth/me', {
+  key: 'current-user-info',
   headers: useRequestHeaders(['cookie']),
   onResponseError({ response }) {
     if (response.status === 401) {
