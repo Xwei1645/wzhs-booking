@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  account    String   @unique
+  password   String
+  name       String
+  role       String   @default("user") // super_admin, admin, user
+  status     Boolean  @default(true)
+  createTime DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  organizations Organization[]
+  bookings      Booking[]
+
+  @@map("users")
+}
+
+model Organization {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  users       User[]
+  bookings    Booking[]
+  createTime  DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("organizations")
+}
+
+model Booking {
+  id             Int          @id @default(autoincrement())
+  roomName       String
+  organizationId Int
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  userId         Int
+  user           User         @relation(fields: [userId], references: [id])
+  startTime      DateTime
+  endTime        DateTime
+  purpose        String
+  remark         String?
+  status         String       @default("pending") // pending, confirmed, cancelled, rejected
+  createTime     DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@map("bookings")
+}
