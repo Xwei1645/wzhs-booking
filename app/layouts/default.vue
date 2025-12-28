@@ -2,7 +2,7 @@
   <t-layout class="app-layout">
     <t-header class="app-header">
       <div class="logo-container">
-        <span class="logo-text">Lattice Campus</span>
+        <span class="logo-text">Lattice Campus | 温州中学场地预约系统</span>
       </div>
       <t-head-menu theme="light" value="item1" class="header-menu">
         <template #operations>
@@ -54,7 +54,7 @@
       v-model:visible="profileVisible"
       header="个人信息"
       :footer="false"
-      width="500px"
+      width="min(500px, 95%)"
     >
       <div style="padding: 10px 0">
         <t-descriptions :column="1" bordered>
@@ -81,7 +81,7 @@
       v-model:visible="passwordVisible"
       header="修改密码"
       :footer="false"
-      width="450px"
+      width="min(450px, 95%)"
     >
       <div style="padding: 10px 0">
         <t-form :data="passwordData" :rules="passwordRules" label-align="top" @submit="onPasswordSubmit">
@@ -276,14 +276,17 @@ const handleMenuClick = (value: any) => {
 }
 
 .logo-container {
-  width: 200px;
+  flex-shrink: 0;
+  margin-right: 24px;
   font-size: 20px;
   font-weight: bold;
   color: var(--td-brand-color);
+  white-space: nowrap;
 }
 
 .header-menu {
   flex: 1;
+  min-width: 0;
 }
 
 .user-info-header {
@@ -300,6 +303,21 @@ const handleMenuClick = (value: any) => {
 .user-name-text {
   font-size: 14px;
   color: var(--td-text-color-primary);
+}
+
+@media (max-width: 768px) {
+  .user-name-text {
+    display: none;
+  }
+  
+  .logo-container {
+    font-size: 18px;
+    margin-right: 12px;
+  }
+  
+  .app-header {
+    padding: 0 12px;
+  }
 }
 
 .org-tags {
@@ -338,11 +356,19 @@ const handleMenuClick = (value: any) => {
   padding: 24px;
 }
 
+@media (max-width: 768px) {
+  .page-container {
+    padding: 12px;
+  }
+}
+
 .content-card {
+  width: 100%;
   border-radius: var(--td-radius-medium);
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
   background-color: var(--td-bg-color-container);
+  box-sizing: border-box;
 }
 
 .content-card:hover {

@@ -21,8 +21,19 @@ model User {
   updatedAt  DateTime @updatedAt
   organizations Organization[]
   bookings      Booking[]
+  sessions      Session[]
 
   @@map("users")
+}
+
+model Session {
+  id        String   @id
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("sessions")
 }
 
 model Organization {

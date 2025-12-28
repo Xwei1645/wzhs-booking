@@ -3,7 +3,7 @@
     <div class="login-box">
       <div class="login-header">
         <h1 class="logo-text">Lattice Campus</h1>
-        <p class="sub-title">欢迎登录校园服务平台</p>
+        <p class="sub-title">温州中学场地预约系统</p>
       </div>
 
       <t-form
@@ -122,11 +122,23 @@ const onSubmit = async ({ validateResult, firstError }: any) => {
 }
 
 .login-box {
-  width: 400px;
+  width: 90%;
+  max-width: 400px;
   padding: 40px;
   background: #fff;
   border-radius: var(--td-radius-large);
   box-shadow: var(--td-shadow-2);
+  box-sizing: border-box;
+}
+
+@media (max-width: 480px) {
+  .login-box {
+    padding: 24px;
+  }
+  
+  .logo-text {
+    font-size: 24px;
+  }
 }
 
 .login-header {

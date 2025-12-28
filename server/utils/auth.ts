@@ -2,9 +2,6 @@ import { H3Event, createError } from 'h3'
 import { db } from './prisma'
 import crypto from 'crypto'
 
-// Session存储（生产环境应使用Redis等持久化存储）
-const sessions = new Map<string, { userId: number; expiresAt: number }>()
-
 // Session配置
 const SESSION_COOKIE_NAME = 'session_token'
 const SESSION_MAX_AGE = 60 * 60 * 24 * 7 // 7天（秒）
@@ -17,16 +14,22 @@ export function generateSessionToken(): string {
 }
 
 /**
- * 创建用户会话
+ * 创建用户会话并存入数据库
  */
-export function createSession(userId: number): string {
+export async function createSession(userId: number): Promise<string> {
     const token = generateSessionToken()
-    const expiresAt = Date.now() + SESSION_MAX_AGE * 1000
+    const expiresAt = new Date(Date.now() + SESSION_MAX_AGE * 1000)
 
-    sessions.set(token, { userId, expiresAt })
+    await db.session.create({
+        data: {
+            id: token,
+            userId,
+            expiresAt
+        }
+    })
 
-    // 清理过期session
-    cleanupExpiredSessions()
+    // 异步清理过期session
+    cleanupExpiredSessions().catch(console.error)
 
     return token
 }
@@ -34,20 +37,27 @@ export function createSession(userId: number): string {
 /**
  * 删除会话
  */
-export function deleteSession(token: string): void {
-    sessions.delete(token)
+export async function deleteSession(token: string): Promise<void> {
+    try {
+        await db.session.delete({
+            where: { id: token }
+        })
+    } catch {
+        // 忽略不存在的情况
+    }
 }
 
 /**
  * 清理过期的session
  */
-function cleanupExpiredSessions(): void {
-    const now = Date.now()
-    for (const [token, session] of sessions) {
-        if (session.expiresAt < now) {
-            sessions.delete(token)
+async function cleanupExpiredSessions(): Promise<void> {
+    await db.session.deleteMany({
+        where: {
+            expiresAt: {
+                lt: new Date()
+            }
         }
-    }
+    })
 }
 
 /**
@@ -82,14 +92,22 @@ export function clearSessionCookie(event: H3Event): void {
 /**
  * 验证session并返回用户ID
  */
-export function validateSession(token: string): number | null {
-    const session = sessions.get(token)
+export async function validateSession(token: string): Promise<number | null> {
+    const session = await db.session.findUnique({
+        where: { id: token },
+        include: { user: true }
+    })
+
     if (!session) {
         return null
     }
 
-    if (session.expiresAt < Date.now()) {
-        sessions.delete(token)
+    if (session.expiresAt < new Date()) {
+        await db.session.delete({ where: { id: token } })
+        return null
+    }
+
+    if (!session.user.status) {
         return null
     }
 
@@ -117,7 +135,7 @@ export async function getAuthUser(event: H3Event): Promise<AuthUser | null> {
         return null
     }
 
-    const userId = validateSession(token)
+    const userId = await validateSession(token)
     if (!userId) {
         return null
     }

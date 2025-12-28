@@ -1,26 +1,24 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
-    // 登录页不需要验证
-    if (to.path === '/login') {
-        // 如果已经登录，跳转到首页
-        const userStr = import.meta.client ? localStorage.getItem('user') : null
-        if (userStr) {
-            try {
-                // 验证session是否仍然有效
-                await $fetch('/api/auth/me')
-                return navigateTo('/')
-            } catch {
-                // session无效，清除本地存储
-                if (import.meta.client) {
+    // 仅在客户端执行的逻辑
+    if (import.meta.client) {
+        const userStr = localStorage.getItem('user')
+
+        // 1. 处理登录页逻辑
+        if (to.path === '/login') {
+            if (userStr) {
+                try {
+                    // 验证 session 是否有效并获取最新数据
+                    const user = await $fetch('/api/auth/me')
+                    localStorage.setItem('user', JSON.stringify(user))
+                    return navigateTo('/')
+                } catch {
                     localStorage.removeItem('user')
                 }
             }
+            return
         }
-        return
-    }
 
-    // 客户端：检查本地存储
-    if (import.meta.client) {
-        const userStr = localStorage.getItem('user')
+        // 2. 处理其他页面逻辑
         if (!userStr) {
             return navigateTo('/login')
         }
@@ -28,13 +26,22 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         try {
             const user = JSON.parse(userStr)
 
-            // 权限控制：用户管理和组织管理仅限管理员
+            // 权限控制
             const adminRoutes = ['/account-management', '/organization-management']
             if (adminRoutes.includes(to.path)) {
                 if (!['root', 'super_admin', 'admin'].includes(user.role)) {
                     return navigateTo('/')
                 }
             }
+
+            // 异步刷新用户信息（不阻塞页面跳转）
+            $fetch('/api/auth/me').then(latestUser => {
+                localStorage.setItem('user', JSON.stringify(latestUser))
+            }).catch(() => {
+                // 如果验证失败，说明 session 过期
+                localStorage.removeItem('user')
+                navigateTo('/login')
+            })
         } catch {
             localStorage.removeItem('user')
             return navigateTo('/login')

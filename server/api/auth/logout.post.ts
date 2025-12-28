@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
 
     if (token) {
         // 删除服务端session
-        deleteSession(token)
+        await deleteSession(token)
     }
 
     // 清除cookie

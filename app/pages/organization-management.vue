@@ -47,6 +47,7 @@
       v-model:visible="dialogVisible"
       :header="dialogTitle"
       :confirm-btn="{ content: '提交', loading: submitLoading }"
+      width="min(500px, 95%)"
       @confirm="handleSubmit"
     >
       <t-form ref="formRef" :data="formData" :rules="rules" @submit="handleSubmit">
@@ -205,6 +206,13 @@ onMounted(() => {
 
 <style scoped>
 .header-actions {
-  margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 600px) {
+  .header-actions :deep(.t-input-adornment) {
+    width: 100%;
+  }
 }
 </style>

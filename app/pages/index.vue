@@ -43,7 +43,7 @@
       v-model:visible="visible"
       header="新建预约"
       :footer="false"
-      width="600px"
+      width="min(600px, 95%)"
     >
       <t-form
         ref="form"
@@ -105,7 +105,7 @@
       v-model:visible="viewVisible"
       header="预约详情"
       :footer="false"
-      width="500px"
+      width="min(500px, 95%)"
     >
       <t-descriptions :column="1" bordered v-if="currentBooking">
         <t-descriptions-item label="预约编号">{{ currentBooking.id }}</t-descriptions-item>
@@ -181,6 +181,13 @@ const { data: userData, refresh: refreshUser } = await useFetch<any>('/api/auth/
 });
 
 const userOrganizations = computed(() => userData.value?.organizations || []);
+
+// 监听用户信息变化并同步到 localStorage
+watch(userData, (val) => {
+  if (val && import.meta.client) {
+    localStorage.setItem('user', JSON.stringify(val));
+  }
+}, { immediate: true });
 
 // 分页配置
 const pagination = reactive({

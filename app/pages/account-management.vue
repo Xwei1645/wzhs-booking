@@ -50,7 +50,7 @@
       v-model:visible="dialogVisible"
       :header="dialogTitle"
       :footer="false"
-      width="500px"
+      width="min(500px, 95%)"
     >
       <t-form :data="formData" :rules="rules" label-align="top" @submit="onFormSubmit">
         <t-form-item label="用户名" name="account">
@@ -89,7 +89,7 @@
       v-model:visible="resetVisible"
       header="重置密码"
       :footer="false"
-      width="400px"
+      width="min(400px, 95%)"
     >
       <t-form :data="resetData" :rules="resetRules" label-align="top" @submit="onResetSubmit">
         <t-form-item label="新密码" name="newPassword">
@@ -322,6 +322,17 @@ const handleDelete = async (row: any) => {
 .header-actions {
   display: flex;
   gap: 16px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+  .header-actions {
+    gap: 8px;
+  }
+  
+  .header-actions :deep(.t-input-adornment) {
+    width: 100%;
+  }
 }
 
 .ml-2 {
