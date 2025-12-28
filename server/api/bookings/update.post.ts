@@ -45,7 +45,10 @@ export default defineEventHandler(async (event) => {
 
         const updatedBooking = await db.booking.update({
             where: { id: Number(id) },
-            data: { status },
+            data: {
+                status,
+                remark: body.remark
+            },
             include: {
                 organization: {
                     select: {

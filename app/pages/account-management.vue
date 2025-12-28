@@ -336,18 +336,4 @@ const handleDelete = async (row: any) => {
   gap: 16px;
   flex-wrap: wrap;
 }
-
-@media (max-width: 600px) {
-  .header-actions {
-    gap: 8px;
-  }
-  
-  .header-actions :deep(.t-input-adornment) {
-    width: 100%;
-  }
-}
-
-.ml-2 {
-  margin-left: 8px;
-}
 </style>

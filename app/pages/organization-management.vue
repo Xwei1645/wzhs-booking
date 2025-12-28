@@ -209,10 +209,4 @@ onMounted(() => {
   display: flex;
   justify-content: flex-end;
 }
-
-@media (max-width: 600px) {
-  .header-actions :deep(.t-input-adornment) {
-    width: 100%;
-  }
-}
 </style>

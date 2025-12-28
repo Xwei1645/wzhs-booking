@@ -1,7 +1,7 @@
 <template>
   <div class="page-container">
     <!-- 卡片 1: 一言 -->
-    <t-card title="一言" :bordered="false" class="content-card quote-card mb-4">
+    <t-card title="一言" :bordered="false" class="content-card quote-card">
       <div class="daily-quote">
         『万千孤单焰火 让这虚构灵魂鲜活』
       </div>
@@ -308,10 +308,5 @@ const handleCancel = async (row: any) => {
   color: var(--td-text-color-secondary);
   font-style: italic;
   padding: 0 0 8px 0;
-}
-
-/* 简单的 margin-bottom utility */
-.mb-4 {
-  margin-bottom: 24px;
 }
 </style>

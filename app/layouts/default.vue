@@ -37,6 +37,10 @@
             <template #icon><usergroup-icon /></template>
             组织管理
           </t-menu-item>
+          <t-menu-item v-if="isAdmin" value="/booking-management" to="/booking-management">
+            <template #icon><assignment-icon /></template>
+            预约审批
+          </t-menu-item>
         </t-menu>
       </t-aside>
       <t-layout>
@@ -108,7 +112,7 @@
 <script setup lang="ts">
 import { onMounted, ref, reactive } from 'vue';
 import { MessagePlugin } from 'tdesign-vue-next';
-import { HomeIcon, UserSettingIcon, LogoutIcon, UsergroupIcon } from 'tdesign-icons-vue-next';
+import { HomeIcon, UserSettingIcon, LogoutIcon, UsergroupIcon, AssignmentIcon } from 'tdesign-icons-vue-next';
 
 const route = useRoute();
 const router = useRouter();
@@ -354,6 +358,9 @@ const handleMenuClick = (value: any) => {
 /* 全局卡片样式统一 */
 .page-container {
   padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 @media (max-width: 768px) {
