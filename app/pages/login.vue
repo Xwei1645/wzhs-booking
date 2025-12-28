@@ -59,6 +59,7 @@
         <p class="contact-admin">注册用户或重置密码请联系校管理员</p>
       </div>
     </div>
+    <p class="copyright">©Xwei1645 2025 All Rights Reserved.</p>
   </div>
 </template>
 
@@ -119,6 +120,7 @@ const onSubmit = async ({ validateResult, firstError }: any) => {
   justify-content: center;
   align-items: center;
   background: linear-gradient(135deg, var(--td-brand-color-light) 0%, var(--td-bg-color-page) 100%);
+  position: relative;
 }
 
 .login-box {
@@ -170,5 +172,14 @@ const onSubmit = async ({ validateResult, firstError }: any) => {
 .contact-admin {
   font-size: 14px;
   color: var(--td-text-color-placeholder);
+  margin: 0;
+}
+
+.copyright {
+  position: absolute;
+  bottom: 24px;
+  font-size: 12px;
+  color: var(--td-text-color-placeholder);
+  margin: 0;
 }
 </style>

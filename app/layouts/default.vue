@@ -276,6 +276,13 @@ const handleMenuClick = (value: any) => {
 <style>
 .app-layout {
   height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-layout > .t-layout {
+  flex: 1;
+  overflow: hidden;
 }
 
 .app-header {
@@ -326,6 +333,13 @@ const handleMenuClick = (value: any) => {
 
 .app-aside {
   border-right: 1px solid var(--td-component-border);
+  position: relative;
+  z-index: 1;
+}
+
+/* 修复侧边栏下方重复页脚问题 */
+.app-aside + .t-layout {
+  flex: 1;
 }
 
 .app-content {
@@ -339,14 +353,6 @@ const handleMenuClick = (value: any) => {
 
 .app-content > div {
   flex: 1;
-}
-
-.app-footer {
-  padding: 16px;
-  text-align: center;
-  color: var(--td-text-color-placeholder);
-  background-color: var(--td-bg-color-page);
-  font-size: 12px;
 }
 
 /* 全局卡片样式统一 */
@@ -370,7 +376,7 @@ const handleMenuClick = (value: any) => {
 }
 
 .content-card:not(.quote-card) {
-  min-width: 800px;
+  min-width: 600px;
 }
 
 .content-card:hover {
@@ -395,5 +401,13 @@ const handleMenuClick = (value: any) => {
 /* 移除默认 margin */
 body {
   margin: 0;
+}
+
+.app-footer {
+  padding: 16px;
+  text-align: center;
+  color: var(--td-text-color-placeholder);
+  font-size: 12px;
+  background-color: var(--td-bg-color-page);
 }
 </style>
