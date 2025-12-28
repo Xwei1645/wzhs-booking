@@ -44,6 +44,51 @@
       </t-table>
     </t-card>
 
+    <!-- 自动审批规则卡片 -->
+    <t-card title="自动审批规则" :bordered="false" class="content-card">
+      <template #actions>
+        <t-button theme="primary" variant="outline" @click="handleAddRule">
+          <template #icon><add-icon /></template>
+          新增规则
+        </t-button>
+      </template>
+      
+      <t-table
+        row-key="id"
+        :data="rules"
+        :columns="ruleColumns"
+        :loading="rulesLoading"
+      >
+        <template #conditions="{ row }">
+          <div class="rule-conditions">
+            <t-tag v-if="row.organizationName" variant="outline" size="small">组织: {{ row.organizationName }}</t-tag>
+            <t-tag v-if="row.roomName" variant="outline" size="small">场地: {{ row.roomName }}</t-tag>
+            <t-tag v-if="row.userName" variant="outline" size="small">用户: {{ row.userName }}</t-tag>
+            <t-tag v-if="row.maxDuration" variant="outline" size="small">时长 ≤ {{ row.maxDuration }}min</t-tag>
+            <t-tag v-if="row.startHour || row.endHour" variant="outline" size="small">
+              时间: {{ row.startHour || '00:00' }} - {{ row.endHour || '23:59' }}
+            </t-tag>
+            <span v-if="!row.organizationName && !row.roomName && !row.userName && !row.maxDuration && !row.startHour && !row.endHour" style="color: var(--td-text-color-placeholder)">无限制</span>
+          </div>
+        </template>
+        <template #action="{ row }">
+          <t-tag :theme="row.action === 'approve' ? 'success' : 'danger'" variant="light">
+            {{ row.action === 'approve' ? '通过' : '驳回' }}
+          </t-tag>
+        </template>
+        <template #status="{ row }">
+          <t-switch v-model="row.status" @change="(val) => handleRuleStatusChange(row, val)" />
+        </template>
+        <template #operation="{ row }">
+          <t-space>
+            <t-popconfirm content="确认删除该规则吗？" @confirm="handleDeleteRule(row)">
+              <t-link theme="danger" hover="color">删除</t-link>
+            </t-popconfirm>
+          </t-space>
+        </template>
+      </t-table>
+    </t-card>
+
     <!-- 驳回原因对话框 -->
     <t-dialog
       v-model:visible="rejectVisible"
@@ -66,11 +111,58 @@
         <p style="white-space: pre-wrap; color: var(--td-text-color-primary)">{{ currentRemark }}</p>
       </div>
     </t-dialog>
+
+    <!-- 新增规则对话框 -->
+    <t-dialog
+      v-model:visible="ruleDialogVisible"
+      header="新增自动审批规则"
+      :confirm-btn="{ content: '提交', loading: ruleSubmitLoading }"
+      @confirm="handleRuleSubmit"
+      width="600px"
+    >
+      <t-form ref="ruleFormRef" :data="ruleFormData" :rules="ruleFormRules" label-align="top">
+        <t-form-item label="规则名称" name="name">
+          <t-input v-model="ruleFormData.name" placeholder="例如：学生会预约自动通过" />
+        </t-form-item>
+        
+        <div class="form-grid">
+          <t-form-item label="限定组织" name="organizationId">
+            <t-select v-model="ruleFormData.organizationId" :options="orgOptions" clearable filterable placeholder="不限" />
+          </t-form-item>
+          <t-form-item label="限定场地" name="roomId">
+            <t-select v-model="ruleFormData.roomId" :options="roomOptions" clearable filterable placeholder="不限" />
+          </t-form-item>
+          <t-form-item label="限定用户" name="userId">
+            <t-select v-model="ruleFormData.userId" :options="userOptions" clearable filterable placeholder="不限" />
+          </t-form-item>
+          <t-form-item label="最大时长 (分钟)" name="maxDuration">
+            <t-input-number v-model="ruleFormData.maxDuration" :min="1" placeholder="不限" style="width: 100%" />
+          </t-form-item>
+        </div>
+
+        <div class="form-grid">
+          <t-form-item label="开始时间范围" name="startHour">
+            <t-time-picker v-model="ruleFormData.startHour" format="HH:mm" placeholder="开始" style="width: 100%" />
+          </t-form-item>
+          <t-form-item label="结束时间范围" name="endHour">
+            <t-time-picker v-model="ruleFormData.endHour" format="HH:mm" placeholder="结束" style="width: 100%" />
+          </t-form-item>
+        </div>
+
+        <t-form-item label="执行动作" name="action">
+          <t-radio-group v-model="ruleFormData.action">
+            <t-radio value="approve">自动通过</t-radio>
+            <t-radio value="reject">自动驳回</t-radio>
+          </t-radio-group>
+        </t-form-item>
+      </t-form>
+    </t-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { MessagePlugin, type PrimaryTableCol } from 'tdesign-vue-next'
+import { AddIcon } from 'tdesign-icons-vue-next'
 
 const loading = ref(false)
 const bookings = ref<any[]>([])
@@ -86,7 +178,7 @@ const pagination = reactive({
 const fetchBookings = async () => {
   loading.value = true
   try {
-    const data = await $fetch('/api/bookings')
+    const data = await $fetch<any>('/api/bookings')
     bookings.value = data as any[]
     pagination.total = bookings.value.length
   } catch (error: any) {
@@ -153,7 +245,7 @@ const formatDateTime = (dateStr: string) => {
 
 const handleApprove = async (row: any) => {
   try {
-    await $fetch('/api/bookings/update', {
+    await $fetch<any>('/api/bookings/update', {
       method: 'POST',
       body: { id: row.id, status: 'confirmed' }
     })
@@ -178,7 +270,7 @@ const confirmReject = async () => {
   if (!currentBooking.value) return
   submitLoading.value = true
   try {
-    await $fetch('/api/bookings/update', {
+    await $fetch<any>('/api/bookings/update', {
       method: 'POST',
       body: { 
         id: currentBooking.value.id, 
@@ -203,15 +295,135 @@ const showRemark = (row: any) => {
   remarkVisible.value = true
 }
 
+// 自动审批规则逻辑
+const rules = ref<any[]>([])
+const rulesLoading = ref(false)
+const ruleDialogVisible = ref(false)
+const ruleSubmitLoading = ref(false)
+const ruleFormRef = ref<any>(null)
+
+const ruleFormData = reactive({
+  name: '',
+  organizationId: undefined as number | undefined,
+  roomId: undefined as number | undefined,
+  userId: undefined as number | undefined,
+  maxDuration: undefined as number | undefined,
+  startHour: '',
+  endHour: '',
+  action: 'approve'
+})
+
+const ruleFormRules = {
+  name: [{ required: true, message: '请输入规则名称', trigger: 'blur' as const }],
+  action: [{ required: true, message: '请选择执行动作', trigger: 'change' as const }]
+}
+
+const ruleColumns: PrimaryTableCol[] = [
+  { colKey: 'name', title: '规则名称' },
+  { colKey: 'conditions', title: '触发条件', width: 300 },
+  { colKey: 'action', title: '执行动作', width: 100 },
+  { colKey: 'status', title: '状态', width: 100 },
+  { colKey: 'operation', title: '操作', width: 100, fixed: 'right' }
+]
+
+const fetchRules = async () => {
+  rulesLoading.value = true
+  try {
+    rules.value = await $fetch<any>('/api/auto-approval')
+  } catch (error: any) {
+    MessagePlugin.error('获取规则失败：' + error.message)
+  } finally {
+    rulesLoading.value = false
+  }
+}
+
+const orgOptions = ref<any[]>([])
+const userOptions = ref<any[]>([])
+const roomOptions = ref<any[]>([])
+
+const fetchOptions = async () => {
+  try {
+    const [orgs, users, rooms] = await Promise.all([
+      $fetch<any>('/api/organizations'),
+      $fetch<any>('/api/users'),
+      $fetch<any>('/api/rooms')
+    ])
+    orgOptions.value = orgs.map((i: any) => ({ label: i.name, value: i.id }))
+    userOptions.value = users.map((i: any) => ({ label: `${i.name} (${i.account})`, value: i.id }))
+    roomOptions.value = rooms.map((i: any) => ({ label: i.name, value: i.id }))
+  } catch (error) {
+    console.error('Failed to fetch options', error)
+  }
+}
+
+const handleAddRule = () => {
+  Object.assign(ruleFormData, {
+    name: '',
+    organizationId: undefined,
+    roomId: undefined,
+    userId: undefined,
+    maxDuration: undefined,
+    startHour: '',
+    endHour: '',
+    action: 'approve'
+  })
+  fetchOptions()
+  ruleDialogVisible.value = true
+}
+
+const handleRuleSubmit = async () => {
+  const validateResult = await ruleFormRef.value?.validate()
+  if (validateResult !== true) return
+
+  ruleSubmitLoading.value = true
+  try {
+    await $fetch<any>('/api/auto-approval/create', {
+      method: 'POST',
+      body: ruleFormData
+    })
+    MessagePlugin.success('规则创建成功')
+    ruleDialogVisible.value = false
+    fetchRules()
+  } catch (error: any) {
+    MessagePlugin.error('创建失败：' + error.message)
+  } finally {
+    ruleSubmitLoading.value = false
+  }
+}
+
+const handleRuleStatusChange = async (row: any, val: any) => {
+  try {
+    await $fetch<any>('/api/auto-approval/update', {
+      method: 'POST',
+      body: { id: row.id, status: val }
+    })
+    MessagePlugin.success('状态更新成功')
+  } catch (error: any) {
+    MessagePlugin.error('更新失败：' + error.message)
+    row.status = !val // 回滚
+  }
+}
+
+const handleDeleteRule = async (row: any) => {
+  try {
+    await $fetch<any>('/api/auto-approval/delete', {
+      method: 'POST',
+      body: { id: row.id }
+    })
+    MessagePlugin.success('删除成功')
+    fetchRules()
+  } catch (error: any) {
+    MessagePlugin.error('删除失败：' + error.message)
+  }
+}
+
 onMounted(() => {
   fetchBookings()
+  fetchRules()
 })
 </script>
 
 <style scoped>
-.page-container {
-  padding: 24px;
-}
 .content-card {
   border-radius: 8px;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -230,5 +442,15 @@ onMounted(() => {
   font-size: 11px;
   color: var(--td-text-color-placeholder);
   margin: 2px 0;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.rule-conditions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 </style>

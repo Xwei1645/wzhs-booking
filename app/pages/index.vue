@@ -11,6 +11,7 @@
     <t-card title="我的预约" :bordered="false" class="content-card">
       <template #actions>
         <t-button theme="primary" @click="handleCreateBooking">
+          <template #icon><add-icon /></template>
           新建预约
         </t-button>
       </template>
@@ -66,7 +67,11 @@
 
         <div style="display: flex; gap: 16px">
           <t-form-item label="使用日期" name="date" style="flex: 1">
-            <t-date-picker v-model="formData.date" style="width: 100%" />
+            <t-date-picker 
+              v-model="formData.date" 
+              style="width: 100%" 
+              :disable-date="{ before: new Date().toISOString().split('T')[0] }"
+            />
           </t-form-item>
           <t-form-item label="开始/结束时间" name="timeRange" style="flex: 1">
             <t-time-range-picker
@@ -130,6 +135,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch, onMounted } from 'vue';
 import { MessagePlugin, type PrimaryTableCol, type FormRules } from 'tdesign-vue-next';
+import { AddIcon } from 'tdesign-icons-vue-next';
 
 // 表格列定义
 const columns: PrimaryTableCol[] = [
@@ -237,6 +243,12 @@ const handleCreateBooking = () => {
 
 const onSubmit = async ({ validateResult, firstError }: any) => {
   if (validateResult === true) {
+    const startTime = new Date(`${formData.date}T${formData.timeRange[0]}:00`);
+    if (startTime < new Date()) {
+      MessagePlugin.error('预约时间不能早于当前时间');
+      return;
+    }
+
     try {
       await $fetch('/api/bookings', {
         method: 'POST',

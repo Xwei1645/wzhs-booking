@@ -23,7 +23,7 @@
       </t-head-menu>
     </t-header>
     <t-layout>
-      <t-aside class="app-aside">
+      <t-aside class="app-aside" width="64px">
         <t-menu theme="light" :value="$route.path" collapsed @change="handleMenuClick">
           <t-menu-item value="/" to="/">
             <template #icon><home-icon /></template>
@@ -365,6 +365,10 @@ const handleMenuClick = (value: any) => {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 @media (max-width: 768px) {

@@ -24,6 +24,13 @@ export default defineEventHandler(async (event) => {
     const endTime = new Date(`${date}T${timeRange[1]}:00`)
 
     // 验证时间范围
+    if (startTime < new Date()) {
+        throw createError({
+            statusCode: 400,
+            statusMessage: 'Booking time must be in the future'
+        })
+    }
+
     if (startTime >= endTime) {
         throw createError({
             statusCode: 400,
@@ -65,6 +72,44 @@ export default defineEventHandler(async (event) => {
             })
         }
 
+        // 检查自动审批规则
+        const autoApprovalRules = await (db as any).autoApprovalRule.findMany({
+            where: { status: true }
+        })
+
+        let finalStatus = 'pending'
+        let autoRemark = remark
+        const durationMinutes = (endTime.getTime() - startTime.getTime()) / (1000 * 60)
+        const startHourStr = startTime.getHours().toString().padStart(2, '0') + ':' + startTime.getMinutes().toString().padStart(2, '0')
+
+        for (const rule of (autoApprovalRules as any[])) {
+            let match = true
+
+            // 检查组织
+            if (rule.organizationId && rule.organizationId !== Number(organizationId)) match = false
+            // 检查场地
+            if (rule.roomId && rule.roomId !== Number(roomId)) match = false
+            // 检查用户
+            if (rule.userId && rule.userId !== user.id) match = false
+            // 检查时长
+            if (rule.maxDuration && durationMinutes > rule.maxDuration) match = false
+            // 检查时间范围 (HH:mm)
+            if (rule.startHour && startHourStr < rule.startHour) match = false
+            if (rule.endHour && startHourStr > rule.endHour) match = false
+
+            if (match) {
+                if (rule.action === 'approve') {
+                    finalStatus = 'confirmed'
+                    autoRemark = (autoRemark ? autoRemark + ' | ' : '') + '系统自动通过: ' + rule.name
+                    break
+                } else if (rule.action === 'reject') {
+                    finalStatus = 'rejected'
+                    autoRemark = (autoRemark ? autoRemark + ' | ' : '') + '系统自动驳回: ' + rule.name
+                    break
+                }
+            }
+        }
+
         const booking = await db.booking.create({
             data: {
                 roomId: Number(roomId),
@@ -73,8 +118,8 @@ export default defineEventHandler(async (event) => {
                 startTime,
                 endTime,
                 purpose,
-                remark,
-                status: 'pending'
+                remark: autoRemark,
+                status: finalStatus
             },
             include: {
                 organization: {
