@@ -22,6 +22,9 @@
         :hover="true"
         :pagination="pagination"
       >
+        <template #createTime="{ row }">
+          {{ formatDateTime(row.createTime) }}
+        </template>
         <template #role="{ row }">
           <t-tag :theme="getRoleTheme(row.role)" variant="light">
             {{ getRoleName(row.role) }}
@@ -129,6 +132,18 @@ interface User {
 
 // 获取当前用户信息
 const currentUser = ref<any>(null);
+
+const formatDateTime = (dateStr: string) => {
+  if (!dateStr) return '-';
+  const date = new Date(dateStr);
+  const Y = date.getFullYear();
+  const M = String(date.getMonth() + 1).padStart(2, '0');
+  const D = String(date.getDate()).padStart(2, '0');
+  const h = String(date.getHours()).padStart(2, '0');
+  const m = String(date.getMinutes()).padStart(2, '0');
+  return `${Y}-${M}-${D} ${h}:${m}`;
+};
+
 onMounted(() => {
   try {
     const userStr = localStorage.getItem('user');
@@ -156,12 +171,12 @@ const filteredUserData = computed(() => {
 
 const columns: PrimaryTableCol[] = [
   { colKey: 'id', title: 'ID', width: 80 },
-  { colKey: 'account', title: '用户名', width: 150 },
-  { colKey: 'name', title: '姓名', width: 120 },
-  { colKey: 'organizations', title: '所属组织', width: 200, cell: 'organizations' },
-  { colKey: 'role', title: '角色', width: 150, cell: 'role' },
+  { colKey: 'account', title: '用户名' },
+  { colKey: 'name', title: '姓名' },
+  { colKey: 'organizations', title: '所属组织', cell: 'organizations' },
+  { colKey: 'role', title: '角色', cell: 'role' },
   { colKey: 'status', title: '状态', width: 120, cell: 'status' },
-  { colKey: 'createTime', title: '创建时间', width: 180 },
+  { colKey: 'createTime', title: '创建时间', width: 180, cell: 'createTime' },
   { colKey: 'op', title: '操作', width: 220, fixed: 'right', cell: 'op' },
 ];
 

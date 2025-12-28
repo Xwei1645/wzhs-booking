@@ -20,9 +20,13 @@
         :data="filteredOrganizations"
         :columns="columns"
         :loading="loading"
+        :hover="true"
         :pagination="pagination"
         @page-change="onPageChange"
       >
+        <template #createTime="{ row }">
+          {{ formatDateTime(row.createTime) }}
+        </template>
         <template #users="{ row }">
           <t-space break-line :size="4">
             <t-tag v-for="user in row.users" :key="user.id" variant="light-outline">
@@ -83,6 +87,17 @@ const submitLoading = ref(false)
 const isEdit = ref(false)
 const formRef = ref<any>(null)
 
+const formatDateTime = (dateStr: string) => {
+  if (!dateStr) return '-';
+  const date = new Date(dateStr);
+  const Y = date.getFullYear();
+  const M = String(date.getMonth() + 1).padStart(2, '0');
+  const D = String(date.getDate()).padStart(2, '0');
+  const h = String(date.getHours()).padStart(2, '0');
+  const m = String(date.getMinutes()).padStart(2, '0');
+  return `${Y}-${M}-${D} ${h}:${m}`;
+};
+
 const filteredOrganizations = computed(() => {
   if (!searchQuery.value) return organizations.value
   const q = searchQuery.value.toLowerCase()
@@ -112,10 +127,10 @@ const pagination = reactive({
 
 const columns: PrimaryTableCol[] = [
   { colKey: 'id', title: 'ID', width: 80 },
-  { colKey: 'name', title: '组织名称', width: 200 },
-  { colKey: 'users', title: '组织成员', width: 300, cell: 'users' },
+  { colKey: 'name', title: '组织名称' },
+  { colKey: 'users', title: '组织成员', cell: 'users' },
   { colKey: 'description', title: '描述' },
-  { colKey: 'createTime', title: '创建时间', width: 180 },
+  { colKey: 'createTime', title: '创建时间', width: 180, cell: 'createTime' },
   { colKey: 'operation', title: '操作', width: 150, fixed: 'right' }
 ]
 

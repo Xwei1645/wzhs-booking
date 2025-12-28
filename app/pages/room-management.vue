@@ -20,6 +20,7 @@
         :data="filteredRooms"
         :columns="columns"
         :loading="loading"
+        :hover="true"
         :pagination="pagination"
         @page-change="onPageChange"
       >
@@ -27,6 +28,9 @@
           <t-tag :theme="row.status ? 'success' : 'danger'" variant="light">
             {{ row.status ? '可用' : '维护中' }}
           </t-tag>
+        </template>
+        <template #createTime="{ row }">
+          {{ formatDateTime(row.createTime) }}
         </template>
         <template #operation="{ row }">
           <t-space>
@@ -128,6 +132,17 @@ const onPageChange = (pageInfo: any) => {
   pagination.pageSize = pageInfo.pageSize
 }
 
+const formatDateTime = (dateStr: string) => {
+  if (!dateStr) return '-';
+  const date = new Date(dateStr);
+  const Y = date.getFullYear();
+  const M = String(date.getMonth() + 1).padStart(2, '0');
+  const D = String(date.getDate()).padStart(2, '0');
+  const h = String(date.getHours()).padStart(2, '0');
+  const m = String(date.getMinutes()).padStart(2, '0');
+  return `${Y}-${M}-${D} ${h}:${m}`;
+};
+
 const handleAdd = () => {
   isEdit.value = false
   Object.assign(formData, {
@@ -190,11 +205,12 @@ const handleSubmit = async () => {
 
 const columns: PrimaryTableCol[] = [
   { colKey: 'id', title: 'ID', width: 70 },
-  { colKey: 'name', title: '场地名称', width: 150 },
-  { colKey: 'capacity', title: '容纳人数', width: 100 },
-  { colKey: 'location', title: '地点', width: 150 },
-  { colKey: 'description', title: '描述', ellipsis: true },
+  { colKey: 'name', title: '场地名称' },
+  { colKey: 'capacity', title: '容纳人数' },
+  { colKey: 'location', title: '地点' },
+  { colKey: 'description', title: '描述' },
   { colKey: 'status', title: '状态', width: 100 },
+  { colKey: 'createTime', title: '创建时间', width: 180 },
   { colKey: 'operation', title: '操作', width: 120, fixed: 'right' },
 ]
 
@@ -204,9 +220,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-container {
-  padding: 24px;
-}
 .header-actions {
   display: flex;
   gap: 16px;

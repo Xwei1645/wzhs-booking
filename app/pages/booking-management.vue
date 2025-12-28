@@ -18,6 +18,7 @@
         :data="filteredBookings"
         :columns="columns"
         :loading="loading"
+        :hover="true"
         :pagination="pagination"
         @page-change="onPageChange"
       >
@@ -32,6 +33,9 @@
           <t-tag :theme="getStatusTheme(row.status)" variant="light">
             {{ getStatusLabel(row.status) }}
           </t-tag>
+        </template>
+        <template #createTime="{ row }">
+          {{ formatDateTime(row.createTime) }}
         </template>
         <template #operation="{ row }">
           <t-space v-if="row.status === 'pending'">
@@ -58,6 +62,7 @@
         :data="rules"
         :columns="ruleColumns"
         :loading="rulesLoading"
+        :hover="true"
       >
         <template #conditions="{ row }">
           <div class="rule-conditions">
@@ -78,6 +83,9 @@
         </template>
         <template #status="{ row }">
           <t-switch v-model="row.status" @change="(val) => handleRuleStatusChange(row, val)" />
+        </template>
+        <template #createTime="{ row }">
+          {{ formatDateTime(row.createTime) }}
         </template>
         <template #operation="{ row }">
           <t-space>
@@ -198,11 +206,12 @@ const filteredBookings = computed(() => {
 
 const columns: PrimaryTableCol[] = [
   { colKey: 'id', title: 'ID', width: 70 },
-  { colKey: 'roomName', title: '场地名称', width: 150 },
-  { colKey: 'orgName', title: '组织', width: 150 },
-  { colKey: 'userName', title: '申请人', width: 120 },
-  { colKey: 'time', title: '预约时间', width: 200 },
-  { colKey: 'purpose', title: '用途', ellipsis: true },
+  { colKey: 'roomName', title: '场地名称' },
+  { colKey: 'orgName', title: '组织' },
+  { colKey: 'userName', title: '申请人' },
+  { colKey: 'time', title: '预约时间', width: 300 },
+  { colKey: 'purpose', title: '用途' },
+  { colKey: 'createTime', title: '申请时间', width: 180 },
   { colKey: 'status', title: '状态', width: 100 },
   { colKey: 'operation', title: '操作', width: 150, fixed: 'right' },
 ]
@@ -234,13 +243,12 @@ const getStatusLabel = (status: string) => {
 
 const formatDateTime = (dateStr: string) => {
   const date = new Date(dateStr)
-  return date.toLocaleString('zh-CN', {
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-  })
+  const Y = date.getFullYear()
+  const M = String(date.getMonth() + 1).padStart(2, '0')
+  const D = String(date.getDate()).padStart(2, '0')
+  const h = String(date.getHours()).padStart(2, '0')
+  const m = String(date.getMinutes()).padStart(2, '0')
+  return `${Y}-${M}-${D} ${h}:${m}`
 }
 
 const handleApprove = async (row: any) => {
@@ -320,9 +328,10 @@ const ruleFormRules = {
 
 const ruleColumns: PrimaryTableCol[] = [
   { colKey: 'name', title: '规则名称' },
-  { colKey: 'conditions', title: '触发条件', width: 300 },
+  { colKey: 'conditions', title: '触发条件' },
   { colKey: 'action', title: '执行动作', width: 100 },
   { colKey: 'status', title: '状态', width: 100 },
+  { colKey: 'createTime', title: '创建时间', width: 180 },
   { colKey: 'operation', title: '操作', width: 100, fixed: 'right' }
 ]
 
@@ -424,10 +433,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.content-card {
-  border-radius: 8px;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-}
 .header-actions {
   display: flex;
   gap: 16px;

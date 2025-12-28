@@ -27,12 +27,20 @@ export default defineEventHandler(async (event) => {
             })
         }
 
-        // 不能修改ID为1的超级管理员的角色
-        if (existingUser.id === 1 && role !== 'super_admin') {
-            throw createError({
-                statusCode: 403,
-                statusMessage: 'Cannot change the primary super administrator role'
-            })
+        // 不能修改ID为1的超级管理员的角色或禁用该用户
+        if (existingUser.id === 1) {
+            if (role && role !== 'super_admin') {
+                throw createError({
+                    statusCode: 403,
+                    statusMessage: 'Cannot change the primary super administrator role'
+                })
+            }
+            if (status === false) {
+                throw createError({
+                    statusCode: 403,
+                    statusMessage: 'Cannot disable the primary super administrator'
+                })
+            }
         }
 
         // 权限控制：不能修改比自己权限更高的用户

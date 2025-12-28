@@ -139,11 +139,12 @@ import { AddIcon } from 'tdesign-icons-vue-next';
 
 // 表格列定义
 const columns: PrimaryTableCol[] = [
-  { colKey: 'id', title: '预约编号', width: 100 },
-  { colKey: 'roomName', title: '预约地点', width: 150 },
-  { colKey: 'orgName', title: '使用组织', width: 150 },
-  { colKey: 'formattedTime', title: '预约时间', width: 250 },
+  { colKey: 'id', title: '预约编号', width: 80 },
+  { colKey: 'roomName', title: '预约地点' },
+  { colKey: 'orgName', title: '使用组织' },
+  { colKey: 'formattedTime', title: '预约时间', width: 300 },
   { colKey: 'purpose', title: '预约事项' },
+  { colKey: 'createTime', title: '申请时间', width: 180 },
   { colKey: 'status', title: '状态', width: 100, cell: 'status' },
   { colKey: 'action', title: '操作', width: 120, cell: 'action', fixed: 'right' },
 ];
@@ -161,16 +162,25 @@ onMounted(() => {
 
 const bookingData = computed(() => {
   return (bookings.value || []).map((b: any) => {
-    const start = new Date(b.startTime);
-    const end = new Date(b.endTime);
-    const dateStr = start.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-');
-    const startTimeStr = start.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false });
-    const endTimeStr = end.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false });
+    const formatDateTime = (dateStr: string) => {
+      if (!dateStr) return '-';
+      const date = new Date(dateStr);
+      const Y = date.getFullYear();
+      const M = String(date.getMonth() + 1).padStart(2, '0');
+      const D = String(date.getDate()).padStart(2, '0');
+      const h = String(date.getHours()).padStart(2, '0');
+      const m = String(date.getMinutes()).padStart(2, '0');
+      return `${Y}-${M}-${D} ${h}:${m}`;
+    };
+    
+    const startTimeStr = formatDateTime(b.startTime);
+    const endTimeStr = formatDateTime(b.endTime);
     
     return {
       ...b,
-      formattedTime: `${dateStr} ${startTimeStr}-${endTimeStr}`,
-      time: `${dateStr} ${startTimeStr}-${endTimeStr}` // Keep for compatibility if needed
+      formattedTime: `${startTimeStr} 至 ${endTimeStr}`,
+      time: `${startTimeStr} 至 ${endTimeStr}`,
+      createTime: formatDateTime(b.createTime)
     };
   });
 });

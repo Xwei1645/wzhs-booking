@@ -313,21 +313,6 @@ const handleMenuClick = (value: any) => {
   color: var(--td-text-color-primary);
 }
 
-@media (max-width: 768px) {
-  .user-name-text {
-    display: none;
-  }
-  
-  .logo-container {
-    font-size: 18px;
-    margin-right: 12px;
-  }
-  
-  .app-header {
-    padding: 0 12px;
-  }
-}
-
 .org-tags {
   display: flex;
   flex-wrap: wrap;
@@ -343,6 +328,7 @@ const handleMenuClick = (value: any) => {
   padding: 0;
   background-color: var(--td-bg-color-page);
   overflow-y: auto;
+  overflow-x: auto;
   display: flex;
   flex-direction: column;
 }
@@ -365,16 +351,9 @@ const handleMenuClick = (value: any) => {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  max-width: 1200px;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
-}
-
-@media (max-width: 768px) {
-  .page-container {
-    padding: 12px;
-  }
 }
 
 .content-card {
@@ -386,8 +365,27 @@ const handleMenuClick = (value: any) => {
   box-sizing: border-box;
 }
 
+.content-card:not(.quote-card) {
+  min-width: 800px;
+}
+
 .content-card:hover {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* 统一表格样式 */
+:deep(.t-table) {
+  background-color: transparent;
+}
+
+:deep(.t-table th) {
+  background-color: var(--td-bg-color-secondarycontainer) !important;
+  font-weight: 600;
+}
+
+:deep(.t-table td) {
+  padding: 12px 16px !important;
+  white-space: nowrap;
 }
 
 /* 移除默认 margin */
