@@ -24,7 +24,7 @@
     </t-header>
     <t-layout>
       <t-aside class="app-aside">
-        <t-menu theme="light" :value="$route.path" @change="handleMenuClick">
+        <t-menu theme="light" :value="$route.path" collapsed @change="handleMenuClick">
           <t-menu-item value="/" to="/">
             <template #icon><home-icon /></template>
             首页
