@@ -49,7 +49,13 @@
     </t-card>
 
     <!-- 自动审批规则卡片 -->
-    <t-card title="自动审批规则" :bordered="false" class="content-card">
+    <t-card :bordered="false" class="content-card">
+      <template #title>
+        <t-space size="8px">
+          <span>自动审批规则</span>
+          <t-tag theme="warning" variant="light" size="small">Beta</t-tag>
+        </t-space>
+      </template>
       <template #actions>
         <t-button theme="primary" variant="outline" @click="handleAddRule">
           <template #icon><add-icon /></template>
@@ -123,11 +129,16 @@
     <!-- 新增规则对话框 -->
     <t-dialog
       v-model:visible="ruleDialogVisible"
-      header="新增自动审批规则"
       :confirm-btn="{ content: '提交', loading: ruleSubmitLoading }"
       @confirm="handleRuleSubmit"
       width="600px"
     >
+      <template #header>
+        <t-space size="8px">
+          <span>新增自动审批规则</span>
+          <t-tag theme="warning" variant="light" size="small">Beta</t-tag>
+        </t-space>
+      </template>
       <t-form ref="ruleFormRef" :data="ruleFormData" :rules="ruleFormRules" label-align="top">
         <t-form-item label="规则名称" name="name">
           <t-input v-model="ruleFormData.name" placeholder="例如：学生会预约自动通过" />
