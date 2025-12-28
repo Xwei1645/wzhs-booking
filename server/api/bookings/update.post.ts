@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 400, statusMessage: 'Missing booking id' })
     }
 
-    if (!status || !['pending', 'confirmed', 'cancelled', 'rejected'].includes(status)) {
+    if (!status || !['pending', 'approved', 'cancelled', 'rejected'].includes(status)) {
         throw createError({ statusCode: 400, statusMessage: 'Invalid status' })
     }
 
@@ -74,7 +74,7 @@ export default defineEventHandler(async (event) => {
             id: updatedBooking.id,
             roomName: updatedBooking.room.name,
             organizationId: updatedBooking.organization.id,
-            orgName: updatedBooking.organization.name,
+            organizationName: updatedBooking.organization.name,
             userId: updatedBooking.user.id,
             userName: updatedBooking.user.name,
             startTime: updatedBooking.startTime,

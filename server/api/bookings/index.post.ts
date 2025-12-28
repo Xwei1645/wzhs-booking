@@ -99,7 +99,7 @@ export default defineEventHandler(async (event) => {
 
             if (match) {
                 if (rule.action === 'approve') {
-                    finalStatus = 'confirmed'
+                    finalStatus = 'approved'
                     autoRemark = (autoRemark ? autoRemark + ' | ' : '') + '系统自动通过: ' + rule.name
                     break
                 } else if (rule.action === 'reject') {
@@ -140,7 +140,7 @@ export default defineEventHandler(async (event) => {
             id: booking.id,
             roomName: booking.room.name,
             organizationId: booking.organization.id,
-            orgName: booking.organization.name,
+            organizationName: booking.organization.name,
             startTime: booking.startTime,
             endTime: booking.endTime,
             purpose: booking.purpose,

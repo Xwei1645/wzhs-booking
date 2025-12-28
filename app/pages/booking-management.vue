@@ -6,7 +6,7 @@
           <t-radio-group v-model="statusFilter" variant="default-filled">
             <t-radio-button value="all">全部</t-radio-button>
             <t-radio-button value="pending">待审批</t-radio-button>
-            <t-radio-button value="confirmed">已通过</t-radio-button>
+            <t-radio-button value="approved">已通过</t-radio-button>
             <t-radio-button value="rejected">已驳回</t-radio-button>
             <t-radio-button value="cancelled">已取消</t-radio-button>
           </t-radio-group>
@@ -135,7 +135,7 @@
         
         <div class="form-grid">
           <t-form-item label="限定组织" name="organizationId">
-            <t-select v-model="ruleFormData.organizationId" :options="orgOptions" clearable filterable placeholder="不限" />
+            <t-select v-model="ruleFormData.organizationId" :options="organizationOptions" clearable filterable placeholder="不限" />
           </t-form-item>
           <t-form-item label="限定场地" name="roomId">
             <t-select v-model="ruleFormData.roomId" :options="roomOptions" clearable filterable placeholder="不限" />
@@ -207,7 +207,7 @@ const filteredBookings = computed(() => {
 const columns: PrimaryTableCol[] = [
   { colKey: 'id', title: 'ID', width: 70 },
   { colKey: 'roomName', title: '场地名称' },
-  { colKey: 'orgName', title: '组织' },
+  { colKey: 'organizationName', title: '组织' },
   { colKey: 'userName', title: '申请人' },
   { colKey: 'time', title: '预约时间', width: 300 },
   { colKey: 'purpose', title: '用途' },
@@ -224,7 +224,7 @@ const onPageChange = (pageInfo: any) => {
 const getStatusTheme = (status: string) => {
   switch (status) {
     case 'pending': return 'warning'
-    case 'confirmed': return 'success'
+    case 'approved': return 'success'
     case 'rejected': return 'danger'
     case 'cancelled': return 'default'
     default: return 'default'
@@ -234,7 +234,7 @@ const getStatusTheme = (status: string) => {
 const getStatusLabel = (status: string) => {
   switch (status) {
     case 'pending': return '待审批'
-    case 'confirmed': return '已通过'
+    case 'approved': return '已通过'
     case 'rejected': return '已驳回'
     case 'cancelled': return '已取消'
     default: return status
@@ -255,7 +255,7 @@ const handleApprove = async (row: any) => {
   try {
     await $fetch<any>('/api/bookings/update', {
       method: 'POST',
-      body: { id: row.id, status: 'confirmed' }
+      body: { id: row.id, status: 'approved' }
     })
     MessagePlugin.success('已通过预约')
     fetchBookings()
@@ -346,7 +346,7 @@ const fetchRules = async () => {
   }
 }
 
-const orgOptions = ref<any[]>([])
+const organizationOptions = ref<any[]>([])
 const userOptions = ref<any[]>([])
 const roomOptions = ref<any[]>([])
 
@@ -357,7 +357,7 @@ const fetchOptions = async () => {
       $fetch<any>('/api/users'),
       $fetch<any>('/api/rooms')
     ])
-    orgOptions.value = orgs.map((i: any) => ({ label: i.name, value: i.id }))
+    organizationOptions.value = orgs.map((i: any) => ({ label: i.name, value: i.id }))
     userOptions.value = users.map((i: any) => ({ label: `${i.name} (${i.account})`, value: i.id }))
     roomOptions.value = rooms.map((i: any) => ({ label: i.name, value: i.id }))
   } catch (error) {

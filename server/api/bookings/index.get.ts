@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
             roomId: b.room.id,
             roomName: b.room.name,
             organizationId: b.organization.id,
-            orgName: b.organization.name,
+            organizationName: b.organization.name,
             userId: b.user.id,
             userName: b.user.name,
             startTime: b.startTime,

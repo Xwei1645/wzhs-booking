@@ -24,9 +24,10 @@
         :pagination="pagination"
       >
         <template #status="{ row }">
-          <t-tag v-if="row.status === 'confirmed'" theme="success" variant="light">已确认</t-tag>
-          <t-tag v-else-if="row.status === 'pending'" theme="warning" variant="light">待审核</t-tag>
-          <t-tag v-else theme="danger" variant="light">已取消</t-tag>
+          <t-tag v-if="row.status === 'approved'" theme="success" variant="light">已通过</t-tag>
+          <t-tag v-else-if="row.status === 'pending'" theme="warning" variant="light">待审批</t-tag>
+          <t-tag v-else-if="row.status === 'rejected'" theme="danger" variant="light">已驳回</t-tag>
+          <t-tag v-else theme="default" variant="light">已取消</t-tag>
         </template>
         <template #action="{ row }">
           <t-link theme="primary" hover="color" style="margin-right: 8px" @click="handleView(row)">
@@ -113,15 +114,16 @@
       width="min(500px, 95%)"
     >
       <t-descriptions :column="1" bordered v-if="currentBooking">
-        <t-descriptions-item label="预约编号">{{ currentBooking.id }}</t-descriptions-item>
+        <t-descriptions-item label="编号">{{ currentBooking.id }}</t-descriptions-item>
         <t-descriptions-item label="预约地点">{{ currentBooking.roomName }}</t-descriptions-item>
-        <t-descriptions-item label="使用组织">{{ currentBooking.orgName }}</t-descriptions-item>
+        <t-descriptions-item label="使用组织">{{ currentBooking.organizationName }}</t-descriptions-item>
         <t-descriptions-item label="预约时间">{{ currentBooking.time }}</t-descriptions-item>
         <t-descriptions-item label="预约事项">{{ currentBooking.purpose }}</t-descriptions-item>
         <t-descriptions-item label="状态">
-          <t-tag v-if="currentBooking.status === 'confirmed'" theme="success" variant="light">已确认</t-tag>
-          <t-tag v-else-if="currentBooking.status === 'pending'" theme="warning" variant="light">待审核</t-tag>
-          <t-tag v-else theme="danger" variant="light">已取消</t-tag>
+          <t-tag v-if="currentBooking.status === 'approved'" theme="success" variant="light">已通过</t-tag>
+          <t-tag v-else-if="currentBooking.status === 'pending'" theme="warning" variant="light">待审批</t-tag>
+          <t-tag v-else-if="currentBooking.status === 'rejected'" theme="danger" variant="light">已驳回</t-tag>
+          <t-tag v-else theme="default" variant="light">已取消</t-tag>
         </t-descriptions-item>
         <t-descriptions-item label="备注">{{ currentBooking.remark || '-' }}</t-descriptions-item>
       </t-descriptions>
@@ -139,9 +141,9 @@ import { AddIcon } from 'tdesign-icons-vue-next';
 
 // 表格列定义
 const columns: PrimaryTableCol[] = [
-  { colKey: 'id', title: '预约编号', width: 80 },
+  { colKey: 'id', title: '编号', width: 80 },
   { colKey: 'roomName', title: '预约地点' },
-  { colKey: 'orgName', title: '使用组织' },
+  { colKey: 'organizationName', title: '使用组织' },
   { colKey: 'formattedTime', title: '预约时间', width: 300 },
   { colKey: 'purpose', title: '预约事项' },
   { colKey: 'createTime', title: '申请时间', width: 180 },
