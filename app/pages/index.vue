@@ -1,13 +1,6 @@
 <template>
   <div class="page-container">
-    <!-- 卡片 1: 一言 -->
-    <t-card title="一言" :bordered="false" class="content-card quote-card">
-      <div class="daily-quote">
-        『万千孤单焰火 让这虚构灵魂鲜活』
-      </div>
-    </t-card>
-
-    <!-- 卡片 2: 我的预约 -->
+    <!-- 我的预约 -->
     <t-card title="我的预约" :bordered="false" class="content-card">
       <template #actions>
         <t-button theme="primary" @click="handleCreateBooking">
@@ -315,18 +308,4 @@ const handleCancel = async (row: any) => {
 </script>
 
 <style scoped>
-.quote-card {
-  border-left: 4px solid var(--td-brand-color);
-}
-
-:deep(.quote-card .t-card__body) {
-  padding-top: 0;
-}
-
-.daily-quote {
-  font-size: 16px;
-  color: var(--td-text-color-secondary);
-  font-style: italic;
-  padding: 0 0 8px 0;
-}
 </style>

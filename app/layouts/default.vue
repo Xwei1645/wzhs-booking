@@ -29,6 +29,10 @@
             <template #icon><home-icon /></template>
             首页
           </t-menu-item>
+          <t-menu-item value="/overview" to="/overview">
+            <template #icon><calendar-icon /></template>
+            总览
+          </t-menu-item>
           <t-menu-item v-if="isAdmin" value="/booking-management" to="/booking-management">
             <template #icon><assignment-icon /></template>
             预约审批
@@ -48,6 +52,10 @@
           <t-menu-item value="/about" to="/about">
             <template #icon><info-circle-icon /></template>
             关于
+          </t-menu-item>
+          <t-menu-item v-if="isDev" value="/debug" to="/debug">
+            <template #icon><bug-icon /></template>
+            调试
           </t-menu-item>
         </t-menu>
       </t-aside>
@@ -120,10 +128,12 @@
 <script setup lang="ts">
 import { onMounted, ref, reactive } from 'vue';
 import { MessagePlugin } from 'tdesign-vue-next';
-import { HomeIcon, UserSettingIcon, LogoutIcon, UsergroupIcon, AssignmentIcon, LocationIcon, InfoCircleIcon } from 'tdesign-icons-vue-next';
+import { HomeIcon, UserSettingIcon, LogoutIcon, UsergroupIcon, AssignmentIcon, LocationIcon, InfoCircleIcon, BugIcon, CalendarIcon } from 'tdesign-icons-vue-next';
 
 const route = useRoute();
 const router = useRouter();
+
+const isDev = import.meta.env.DEV;
 
 // 使用响应式对象存储用户信息
 const userInfo = ref<any>(null);
@@ -345,14 +355,17 @@ const handleMenuClick = (value: any) => {
 .app-content {
   padding: 0;
   background-color: var(--td-bg-color-page);
-  overflow-y: auto;
-  overflow-x: auto;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .app-content > div {
   flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
 }
 
 /* 全局卡片样式统一 */

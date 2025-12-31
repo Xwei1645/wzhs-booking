@@ -4,13 +4,22 @@ import { requireAuth } from '../../utils/auth'
 export default defineEventHandler(async (event) => {
     const user = await requireAuth(event)
 
+    const query = getQuery(event)
+    const scope = query.scope as string
+
     try {
         const isAdmin = ['root', 'super_admin', 'admin'].includes(user.role)
 
+        // 如果是管理员，或者请求 scope 为 all，则查询所有预约
+        // 否则只查询自己的预约
+        const whereCondition: any = {}
+
+        if (!isAdmin && scope !== 'all') {
+            whereCondition.userId = user.id
+        }
+
         const bookings = await db.booking.findMany({
-            where: isAdmin ? undefined : {
-                userId: user.id
-            },
+            where: whereCondition,
             include: {
                 organization: {
                     select: {
