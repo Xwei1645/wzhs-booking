@@ -29,10 +29,6 @@
             <template #icon><home-icon /></template>
             首页
           </t-menu-item>
-          <t-menu-item value="/overview" to="/overview">
-            <template #icon><calendar-icon /></template>
-            总览
-          </t-menu-item>
           <t-menu-item v-if="isAdmin" value="/booking-management" to="/booking-management">
             <template #icon><assignment-icon /></template>
             预约审批
@@ -87,7 +83,7 @@
           </t-descriptions-item>
           <t-descriptions-item label="所属组织">
             <div v-if="profileData.organizations && profileData.organizations.length > 0" class="org-tags">
-              <t-tag v-for="org in profileData.organizations" :key="org.id" variant="outline">
+              <t-tag v-for="org in profileData.organizations" :key="org.id" variant="light">
                 {{ org.name }}
               </t-tag>
             </div>
@@ -108,13 +104,13 @@
       <div style="padding: 10px 0">
         <t-form ref="passwordFormRef" :data="passwordData" :rules="passwordRules" label-align="top" @submit="onPasswordSubmit">
           <t-form-item label="旧密码" name="oldPassword">
-            <t-input v-model="passwordData.oldPassword" type="password" placeholder="请输入旧密码" />
+            <t-input v-model="passwordData.oldPassword" type="password" placeholder="请输入旧密码" variant="filled" />
           </t-form-item>
           <t-form-item label="新密码" name="newPassword">
-            <t-input v-model="passwordData.newPassword" type="password" placeholder="请输入新密码" />
+            <t-input v-model="passwordData.newPassword" type="password" placeholder="请输入新密码" variant="filled" />
           </t-form-item>
           <t-form-item label="确认新密码" name="confirmPassword">
-            <t-input v-model="passwordData.confirmPassword" type="password" placeholder="请再次输入新密码" />
+            <t-input v-model="passwordData.confirmPassword" type="password" placeholder="请再次输入新密码" variant="filled" />
           </t-form-item>
         </t-form>
       </div>

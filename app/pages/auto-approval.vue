@@ -6,7 +6,7 @@
         <t-tag theme="warning" variant="light" size="small">Beta</t-tag>
       </t-space>
       <div class="header-actions">
-        <t-button theme="primary" variant="outline" @click="handleAddRule">
+        <t-button theme="primary" @click="handleAddRule">
           <template #icon><add-icon /></template>
           新增规则
         </t-button>
@@ -23,11 +23,11 @@
       >
         <template #conditions="{ row }">
           <div class="rule-conditions">
-            <t-tag v-if="row.organizationName" variant="outline" size="small">组织: {{ row.organizationName }}</t-tag>
-            <t-tag v-if="row.roomName" variant="outline" size="small">场地: {{ row.roomName }}</t-tag>
-            <t-tag v-if="row.userName" variant="outline" size="small">用户: {{ row.userName }}</t-tag>
-            <t-tag v-if="row.maxDuration" variant="outline" size="small">时长 ≤ {{ row.maxDuration }}min</t-tag>
-            <t-tag v-if="row.startHour || row.endHour" variant="outline" size="small">
+            <t-tag v-if="row.organizationName" variant="light" size="small">组织: {{ row.organizationName }}</t-tag>
+            <t-tag v-if="row.roomName" variant="light" size="small">场地: {{ row.roomName }}</t-tag>
+            <t-tag v-if="row.userName" variant="light" size="small">用户: {{ row.userName }}</t-tag>
+            <t-tag v-if="row.maxDuration" variant="light" size="small">时长 ≤ {{ row.maxDuration }}min</t-tag>
+            <t-tag v-if="row.startHour || row.endHour" variant="light" size="small">
               时间: {{ row.startHour || '00:00' }} - {{ row.endHour || '23:59' }}
             </t-tag>
             <span v-if="!row.organizationName && !row.roomName && !row.userName && !row.maxDuration && !row.startHour && !row.endHour" style="color: var(--td-text-color-placeholder)">无限制</span>
@@ -69,30 +69,30 @@
       </template>
       <t-form ref="ruleFormRef" :data="ruleFormData" :rules="ruleFormRules" label-align="top">
         <t-form-item label="规则名称" name="name">
-          <t-input v-model="ruleFormData.name" placeholder="例如：学生会预约自动通过" />
+          <t-input v-model="ruleFormData.name" placeholder="例如：学生会预约自动通过" variant="filled" />
         </t-form-item>
         
         <div class="form-grid">
           <t-form-item label="限定组织" name="organizationId">
-            <t-select v-model="ruleFormData.organizationId" :options="organizationOptions" clearable filterable placeholder="不限" />
+            <t-select v-model="ruleFormData.organizationId" :options="organizationOptions" clearable filterable placeholder="不限" variant="filled" />
           </t-form-item>
           <t-form-item label="限定场地" name="roomId">
-            <t-select v-model="ruleFormData.roomId" :options="roomOptions" clearable filterable placeholder="不限" />
+            <t-select v-model="ruleFormData.roomId" :options="roomOptions" clearable filterable placeholder="不限" variant="filled" />
           </t-form-item>
           <t-form-item label="限定用户" name="userId">
-            <t-select v-model="ruleFormData.userId" :options="userOptions" clearable filterable placeholder="不限" />
+            <t-select v-model="ruleFormData.userId" :options="userOptions" clearable filterable placeholder="不限" variant="filled" />
           </t-form-item>
           <t-form-item label="最大时长 (分钟)" name="maxDuration">
-            <t-input-number v-model="ruleFormData.maxDuration" :min="1" placeholder="不限" style="width: 100%" />
+            <t-input-number v-model="ruleFormData.maxDuration" :min="1" placeholder="不限" style="width: 100%" variant="filled" />
           </t-form-item>
         </div>
 
         <div class="form-grid">
           <t-form-item label="开始时间范围" name="startHour">
-            <t-time-picker v-model="ruleFormData.startHour" format="HH:mm" placeholder="开始" style="width: 100%" />
+            <t-time-picker v-model="ruleFormData.startHour" format="HH:mm" placeholder="开始" style="width: 100%" variant="filled" />
           </t-form-item>
           <t-form-item label="结束时间范围" name="endHour">
-            <t-time-picker v-model="ruleFormData.endHour" format="HH:mm" placeholder="结束" style="width: 100%" />
+            <t-time-picker v-model="ruleFormData.endHour" format="HH:mm" placeholder="结束" style="width: 100%" variant="filled" />
           </t-form-item>
         </div>
 

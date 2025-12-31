@@ -4,7 +4,7 @@
       <h2 class="page-title">用户管理</h2>
       <div class="header-actions">
         <t-input-adornment>
-          <t-input v-model="searchQuery" placeholder="搜索用户名/姓名" clearable />
+          <t-input v-model="searchQuery" placeholder="搜索用户名/姓名" clearable variant="filled" />
           <template #append>
             <t-button theme="primary" @click="handleAddUser">
               <template #icon><add-icon /></template>
@@ -33,7 +33,7 @@
         </template>
         <template #organizations="{ row }">
           <t-space break-line :size="4">
-            <t-tag v-for="org in row.organizations" :key="org.id" variant="light-outline">
+            <t-tag v-for="org in row.organizations" :key="org.id" variant="light">
               {{ org.name }}
             </t-tag>
           </t-space>
@@ -66,23 +66,23 @@
     >
       <t-form ref="formRef" :data="formData" :rules="rules" label-align="top" @submit="onFormSubmit">
         <t-form-item label="用户名" name="account">
-          <t-input v-model="formData.account" placeholder="请输入登录用户名" :disabled="isEdit" />
+          <t-input v-model="formData.account" placeholder="请输入登录用户名" :disabled="isEdit" variant="filled" />
         </t-form-item>
         <t-form-item label="姓名" name="name">
-          <t-input v-model="formData.name" placeholder="请输入真实姓名" />
+          <t-input v-model="formData.name" placeholder="请输入真实姓名" variant="filled" />
         </t-form-item>
         <t-form-item v-if="!isEdit" label="初始密码" name="password">
-          <t-input v-model="formData.password" type="password" placeholder="请输入初始密码" />
+          <t-input v-model="formData.password" type="password" placeholder="请输入初始密码" variant="filled" />
         </t-form-item>
         <t-form-item label="角色权限" name="role">
-          <t-select v-model="formData.role" placeholder="请选择角色">
+          <t-select v-model="formData.role" placeholder="请选择角色" variant="filled">
             <t-option label="普通用户" value="user" />
             <t-option label="管理员" value="admin" />
             <t-option label="超级管理员" value="super_admin" />
           </t-select>
         </t-form-item>
         <t-form-item label="所属组织" name="organizationIds">
-          <t-select v-model="formData.organizationIds" multiple placeholder="请选择组织">
+          <t-select v-model="formData.organizationIds" multiple placeholder="请选择组织" variant="filled">
             <t-option v-for="org in organizations" :key="org.id" :label="org.name" :value="org.id" />
           </t-select>
         </t-form-item>
@@ -99,7 +99,7 @@
     >
       <t-form ref="resetFormRef" :data="resetData" :rules="resetRules" label-align="top" @submit="onResetSubmit">
         <t-form-item label="新密码" name="newPassword">
-          <t-input v-model="resetData.newPassword" type="password" placeholder="请输入新密码" />
+          <t-input v-model="resetData.newPassword" type="password" placeholder="请输入新密码" variant="filled" />
         </t-form-item>
       </t-form>
     </t-dialog>

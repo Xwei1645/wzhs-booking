@@ -51,13 +51,13 @@
         @submit="onSubmit"
       >
         <t-form-item label="预约场地" name="roomId">
-          <t-select v-model="formData.roomId" placeholder="请选择场地">
+          <t-select v-model="formData.roomId" placeholder="请选择场地" variant="filled">
             <t-option v-for="item in roomOptions" :key="item.id" :value="item.id" :label="item.name" :disabled="!item.status" />
           </t-select>
         </t-form-item>
 
         <t-form-item label="使用组织" name="organizationId">
-          <t-select v-model="formData.organizationId" placeholder="请选择使用组织">
+          <t-select v-model="formData.organizationId" placeholder="请选择使用组织" variant="filled">
             <t-option v-for="org in userOrganizations" :key="org.id" :value="org.id" :label="org.name" />
           </t-select>
         </t-form-item>
@@ -68,6 +68,7 @@
               v-model="formData.date" 
               style="width: 100%" 
               :disable-date="{ before: new Date().toISOString().split('T')[0] }"
+              variant="filled"
             />
           </t-form-item>
           <t-form-item label="开始/结束时间" name="timeRange" style="flex: 1">
@@ -77,6 +78,7 @@
               :steps="[1, 5]"
               style="width: 100%"
               clearable
+              variant="filled"
             />
           </t-form-item>
         </div>
@@ -86,11 +88,12 @@
             v-model="formData.purpose"
             placeholder="请用简洁说明场地用途"
             :autosize="{ minRows: 3, maxRows: 5 }"
+            variant="filled"
           />
         </t-form-item>
 
         <t-form-item label="备注" name="remark">
-          <t-input v-model="formData.remark" placeholder="请填写备注（如有）" />
+          <t-input v-model="formData.remark" placeholder="请填写备注（如有）" variant="filled" />
         </t-form-item>
       </t-form>
     </t-dialog>

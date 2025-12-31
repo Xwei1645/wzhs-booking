@@ -22,11 +22,23 @@
         <div class="section">
           <div class="section-title">技术栈</div>
           <p class="section-text">本项目使用了以下优秀的技术栈：</p>
-          <ul class="tech-bullet-list">
-            <li><t-link href="https://nuxt.com/" target="_blank" theme="primary" hover="color">Nuxt 4</t-link> - 全栈 Vue 框架</li>
-            <li><t-link href="https://vuejs.org/" target="_blank" theme="primary" hover="color">Vue 3</t-link> - 渐进式 JavaScript 框架</li>
-            <li><t-link href="https://tdesign.tencent.com/" target="_blank" theme="primary" hover="color">TDesign Vue Next</t-link> - 企业级设计语言和组件库</li>
-            <li><t-link href="https://www.prisma.io/" target="_blank" theme="primary" hover="color">Prisma</t-link> - 下一代 Node.js 和 TypeScript ORM</li>
+          <ul class="tech-list">
+            <li>
+              <t-link href="https://nuxt.com/" target="_blank" theme="primary">Nuxt 4</t-link>
+              <span class="tech-desc"> - 全栈 Vue 框架</span>
+            </li>
+            <li>
+              <t-link href="https://vuejs.org/" target="_blank" theme="primary">Vue 3</t-link>
+              <span class="tech-desc"> - 渐进式 JavaScript 框架</span>
+            </li>
+            <li>
+              <t-link href="https://tdesign.tencent.com/" target="_blank" theme="primary">TDesign Vue Next</t-link>
+              <span class="tech-desc"> - 企业级设计语言和组件库</span>
+            </li>
+            <li>
+              <t-link href="https://www.prisma.io/" target="_blank" theme="primary">Prisma</t-link>
+              <span class="tech-desc"> - 下一代 Node.js 和 TypeScript ORM</span>
+            </li>
           </ul>
         </div>
 
@@ -36,7 +48,7 @@
             特别感谢团委学联对本项目的大力支持。
           </p>
           <p class="section-text">
-            感谢 <t-link href="https://github.com/education" target="_blank" theme="primary" hover="color">GitHub Education</t-link> Benefits 提供的 Copilot Pro。
+            感谢 <t-link href="https://github.com/education" target="_blank" theme="primary">GitHub Education</t-link> Benefits 提供的 Copilot Pro。
           </p>
         </div>
 
@@ -60,47 +72,57 @@
 }
 
 .section {
-  padding: 16px 0;
-}
-
-.section:first-child {
-  padding-top: 0;
+  padding: 8px 0;
 }
 
 .section-title {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--td-text-color-primary);
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
 }
 
 .section-title::before {
   content: '';
-  width: 3px;
-  height: 16px;
+  width: 4px;
+  height: 18px;
   background-color: var(--td-brand-color);
-  margin-right: 8px;
+  margin-right: 12px;
   border-radius: var(--td-radius-small);
 }
 
 .section-text {
-  font-size: 16px;
-  line-height: 1.8;
-  color: var(--td-text-color-primary);
-  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--td-text-color-secondary);
+  margin: 0 0 8px 0;
 }
 
-.tech-bullet-list {
-  padding-left: 20px;
-  margin: 0;
-  color: var(--td-text-color-primary);
-  font-size: 16px;
-  line-height: 2;
+.tech-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0 0;
 }
 
-.tech-bullet-list li {
-  margin-bottom: 4px;
+.tech-list li {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: var(--td-text-color-secondary);
+  display: flex;
+  align-items: center;
+}
+
+.tech-list li::before {
+  content: '•';
+  color: var(--td-brand-color);
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+.tech-desc {
+  color: var(--td-text-color-placeholder);
+  margin-left: 4px;
 }
 </style>

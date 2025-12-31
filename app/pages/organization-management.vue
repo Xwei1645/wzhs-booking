@@ -4,7 +4,7 @@
       <h2 class="page-title">组织管理</h2>
       <div class="header-actions">
         <t-input-adornment>
-          <t-input v-model="searchQuery" placeholder="搜索组织名称" clearable />
+          <t-input v-model="searchQuery" placeholder="搜索组织名称" clearable variant="filled" />
           <template #append>
             <t-button theme="primary" @click="handleAdd">
               <template #icon><add-icon /></template>
@@ -30,7 +30,7 @@
         </template>
         <template #users="{ row }">
           <t-space break-line :size="4">
-            <t-tag v-for="user in row.users" :key="user.id" variant="light-outline">
+            <t-tag v-for="user in row.users" :key="user.id" variant="light">
               {{ user.name }}
             </t-tag>
             <span v-if="!row.users?.length" style="color: var(--td-text-color-placeholder)">暂无成员</span>
@@ -57,10 +57,10 @@
     >
       <t-form ref="formRef" :data="formData" :rules="rules" @submit="handleSubmit">
         <t-form-item label="组织名称" name="name">
-          <t-input v-model="formData.name" placeholder="请输入组织名称" />
+          <t-input v-model="formData.name" placeholder="请输入组织名称" variant="filled" />
         </t-form-item>
         <t-form-item label="描述" name="description">
-          <t-textarea v-model="formData.description" placeholder="请输入组织描述" />
+          <t-textarea v-model="formData.description" placeholder="请输入组织描述" variant="filled" />
         </t-form-item>
         <t-form-item label="组织成员" name="userIds">
           <t-select
@@ -69,6 +69,7 @@
             placeholder="请选择组织成员"
             :options="userOptions"
             filterable
+            variant="filled"
           />
         </t-form-item>
       </t-form>

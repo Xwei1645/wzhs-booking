@@ -18,6 +18,7 @@
             v-model="formData.account"
             placeholder="请输入用户名"
             size="large"
+            variant="filled"
           >
             <template #prefix-icon>
               <user-icon />
@@ -31,6 +32,7 @@
             type="password"
             placeholder="请输入密码"
             size="large"
+            variant="filled"
           >
             <template #prefix-icon>
               <lock-on-icon />

@@ -4,7 +4,7 @@
       <h2 class="page-title">场地管理</h2>
       <div class="header-actions">
         <t-input-adornment>
-          <t-input v-model="searchQuery" placeholder="搜索场地名称/地点" clearable />
+          <t-input v-model="searchQuery" placeholder="搜索场地名称/地点" clearable variant="filled" />
           <template #append>
             <t-button theme="primary" @click="handleAdd">
               <template #icon><add-icon /></template>
@@ -54,16 +54,16 @@
     >
       <t-form ref="formRef" :data="formData" :rules="rules" label-align="top" @submit="handleSubmit">
         <t-form-item label="场地名称" name="name">
-          <t-input v-model="formData.name" placeholder="请输入场地名称" />
+          <t-input v-model="formData.name" placeholder="请输入场地名称" variant="filled" />
         </t-form-item>
         <t-form-item label="容纳人数" name="capacity">
-          <t-input-number v-model="formData.capacity" :min="0" style="width: 100%" />
+          <t-input-number v-model="formData.capacity" :min="0" style="width: 100%" variant="filled" />
         </t-form-item>
         <t-form-item label="地点" name="location">
-          <t-input v-model="formData.location" placeholder="请输入场地地点" />
+          <t-input v-model="formData.location" placeholder="请输入场地地点" variant="filled" />
         </t-form-item>
         <t-form-item label="描述" name="description">
-          <t-textarea v-model="formData.description" placeholder="请输入场地描述" />
+          <t-textarea v-model="formData.description" placeholder="请输入场地描述" variant="filled" />
         </t-form-item>
         <t-form-item label="状态" name="status">
           <t-switch v-model="formData.status" :label="['可用', '维护中']" />
