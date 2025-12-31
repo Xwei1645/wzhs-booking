@@ -24,11 +24,7 @@
         @page-change="onPageChange"
       >
         <template #time="{ row }">
-          <div class="time-cell">
-            <span>{{ formatDateTime(row.startTime) }}</span>
-            <span class="time-separator">至</span>
-            <span>{{ formatDateTime(row.endTime) }}</span>
-          </div>
+          {{ formatBookingTime(row.startTime, row.endTime) }}
         </template>
         <template #status="{ row }">
           <t-tag :theme="getStatusTheme(row.status)" variant="light">
@@ -81,6 +77,7 @@
 <script setup lang="ts">
 import { MessagePlugin, type PrimaryTableCol } from 'tdesign-vue-next'
 import { AddIcon } from 'tdesign-icons-vue-next'
+import { formatBookingTime, formatDateTime } from '~/utils/format'
 
 const loading = ref(false)
 const bookings = ref<any[]>([])
@@ -151,16 +148,6 @@ const getStatusLabel = (status: string) => {
   }
 }
 
-const formatDateTime = (dateStr: string) => {
-  const date = new Date(dateStr)
-  const Y = date.getFullYear()
-  const M = String(date.getMonth() + 1).padStart(2, '0')
-  const D = String(date.getDate()).padStart(2, '0')
-  const h = String(date.getHours()).padStart(2, '0')
-  const m = String(date.getMinutes()).padStart(2, '0')
-  return `${Y}-${M}-${D} ${h}:${m}`
-}
-
 const handleApprove = async (row: any) => {
   try {
     await $fetch<any>('/api/bookings/update', {
@@ -227,16 +214,4 @@ onMounted(() => {
   display: flex;
   gap: 16px;
 }
-.time-cell {
-  display: flex;
-  flex-direction: column;
-  font-size: 13px;
-  line-height: 1.4;
-}
-.time-separator {
-  font-size: 11px;
-  color: var(--td-text-color-placeholder);
-  margin: 2px 0;
-}
-
 </style>

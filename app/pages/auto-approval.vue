@@ -20,6 +20,7 @@
         :columns="ruleColumns"
         :loading="rulesLoading"
         :hover="true"
+        :pagination="pagination"
       >
         <template #conditions="{ row }">
           <div class="rule-conditions">
@@ -46,6 +47,7 @@
         </template>
         <template #operation="{ row }">
           <t-space>
+            <t-link theme="primary" hover="color" @click="handleEditRule(row)">编辑</t-link>
             <t-popconfirm content="确认删除该规则吗？" @confirm="handleDeleteRule(row)">
               <t-link theme="danger" hover="color">删除</t-link>
             </t-popconfirm>
@@ -54,7 +56,7 @@
       </t-table>
     </t-card>
 
-    <!-- 新增规则对话框 -->
+    <!-- 新增/编辑规则对话框 -->
     <t-dialog
       v-model:visible="ruleDialogVisible"
       :confirm-btn="{ content: '提交', loading: ruleSubmitLoading }"
@@ -63,7 +65,7 @@
     >
       <template #header>
         <t-space size="8px">
-          <span>新增自动审批规则</span>
+          <span>{{ ruleFormData.id ? '编辑' : '新增' }}自动审批规则</span>
           <t-tag theme="warning" variant="light" size="small">Beta</t-tag>
         </t-space>
       </template>
@@ -110,6 +112,7 @@
 <script setup lang="ts">
 import { MessagePlugin, type PrimaryTableCol } from 'tdesign-vue-next'
 import { AddIcon } from 'tdesign-icons-vue-next'
+import { formatDateTime } from '~/utils/format'
 
 // 自动审批规则逻辑
 const rules = ref<any[]>([])
@@ -119,6 +122,7 @@ const ruleSubmitLoading = ref(false)
 const ruleFormRef = ref<any>(null)
 
 const ruleFormData = reactive({
+  id: undefined as number | undefined,
   name: '',
   organizationId: undefined as number | undefined,
   roomId: undefined as number | undefined,
@@ -140,23 +144,20 @@ const ruleColumns: PrimaryTableCol[] = [
   { colKey: 'action', title: '执行动作', width: 100 },
   { colKey: 'status', title: '状态', width: 100 },
   { colKey: 'createTime', title: '创建时间', width: 180 },
-  { colKey: 'operation', title: '操作', width: 100, fixed: 'right' }
+  { colKey: 'operation', title: '操作', width: 150, fixed: 'right' }
 ]
 
-const formatDateTime = (dateStr: string) => {
-  const date = new Date(dateStr)
-  const Y = date.getFullYear()
-  const M = String(date.getMonth() + 1).padStart(2, '0')
-  const D = String(date.getDate()).padStart(2, '0')
-  const h = String(date.getHours()).padStart(2, '0')
-  const m = String(date.getMinutes()).padStart(2, '0')
-  return `${Y}-${M}-${D} ${h}:${m}`
-}
+const pagination = reactive({
+  defaultCurrent: 1,
+  defaultPageSize: 10,
+  total: 0,
+})
 
 const fetchRules = async () => {
   rulesLoading.value = true
   try {
     rules.value = await $fetch<any>('/api/auto-approval')
+    pagination.total = rules.value.length
   } catch (error: any) {
     MessagePlugin.error('获取规则失败：' + error.message)
   } finally {
@@ -185,6 +186,7 @@ const fetchOptions = async () => {
 
 const handleAddRule = () => {
   Object.assign(ruleFormData, {
+    id: undefined,
     name: '',
     organizationId: undefined,
     roomId: undefined,
@@ -198,21 +200,45 @@ const handleAddRule = () => {
   ruleDialogVisible.value = true
 }
 
+const handleEditRule = (row: any) => {
+  Object.assign(ruleFormData, {
+    id: row.id,
+    name: row.name,
+    organizationId: row.organizationId,
+    roomId: row.roomId,
+    userId: row.userId,
+    maxDuration: row.maxDuration,
+    startHour: row.startHour,
+    endHour: row.endHour,
+    action: row.action
+  })
+  fetchOptions()
+  ruleDialogVisible.value = true
+}
+
 const handleRuleSubmit = async () => {
   const validateResult = await ruleFormRef.value?.validate()
   if (validateResult !== true) return
 
   ruleSubmitLoading.value = true
   try {
-    await $fetch<any>('/api/auto-approval/create', {
-      method: 'POST',
-      body: ruleFormData
-    })
-    MessagePlugin.success('规则创建成功')
+    if (ruleFormData.id) {
+      await $fetch<any>('/api/auto-approval/update', {
+        method: 'POST',
+        body: ruleFormData
+      })
+      MessagePlugin.success('规则更新成功')
+    } else {
+      await $fetch<any>('/api/auto-approval/create', {
+        method: 'POST',
+        body: ruleFormData
+      })
+      MessagePlugin.success('规则创建成功')
+    }
     ruleDialogVisible.value = false
     fetchRules()
   } catch (error: any) {
-    MessagePlugin.error('创建失败：' + error.message)
+    MessagePlugin.error('操作失败：' + error.message)
   } finally {
     ruleSubmitLoading.value = false
   }

@@ -129,6 +129,7 @@
 import { ref, reactive, computed, watch, onMounted } from 'vue';
 import { MessagePlugin, type PrimaryTableCol, type FormRules } from 'tdesign-vue-next';
 import { AddIcon } from 'tdesign-icons-vue-next';
+import { formatBookingTime, formatDateTime } from '~/utils/format';
 
 // 表格列定义
 const columns: PrimaryTableCol[] = [
@@ -155,24 +156,10 @@ onMounted(() => {
 
 const bookingData = computed(() => {
   return (bookings.value || []).map((b: any) => {
-    const formatDateTime = (dateStr: string) => {
-      if (!dateStr) return '-';
-      const date = new Date(dateStr);
-      const Y = date.getFullYear();
-      const M = String(date.getMonth() + 1).padStart(2, '0');
-      const D = String(date.getDate()).padStart(2, '0');
-      const h = String(date.getHours()).padStart(2, '0');
-      const m = String(date.getMinutes()).padStart(2, '0');
-      return `${Y}-${M}-${D} ${h}:${m}`;
-    };
-    
-    const startTimeStr = formatDateTime(b.startTime);
-    const endTimeStr = formatDateTime(b.endTime);
-    
     return {
       ...b,
-      formattedTime: `${startTimeStr} 至 ${endTimeStr}`,
-      time: `${startTimeStr} 至 ${endTimeStr}`,
+      formattedTime: formatBookingTime(b.startTime, b.endTime),
+      time: formatBookingTime(b.startTime, b.endTime),
       createTime: formatDateTime(b.createTime)
     };
   });
