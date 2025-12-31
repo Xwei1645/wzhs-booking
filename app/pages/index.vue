@@ -1,14 +1,16 @@
 <template>
   <div class="page-container">
-    <!-- 我的预约 -->
-    <t-card title="我的预约" :bordered="false" class="content-card">
-      <template #actions>
+    <div class="page-header">
+      <h2 class="page-title">我的预约</h2>
+      <div class="header-actions">
         <t-button theme="primary" @click="handleCreateBooking">
           <template #icon><add-icon /></template>
           新建预约
         </t-button>
-      </template>
+      </div>
+    </div>
       
+    <t-card :bordered="false" class="content-card">
       <t-table
         row-key="id"
         :data="bookingData"
@@ -37,8 +39,9 @@
     <t-dialog
       v-model:visible="visible"
       header="新建预约"
-      :footer="false"
+      :confirm-btn="{ content: '提交预约', loading: submitLoading }"
       width="min(600px, 95%)"
+      @confirm="() => form?.submit()"
     >
       <t-form
         ref="form"
@@ -89,13 +92,6 @@
         <t-form-item label="备注" name="remark">
           <t-input v-model="formData.remark" placeholder="请填写备注（如有）" />
         </t-form-item>
-
-        <t-form-item style="margin-top: 24px">
-          <div style="display: flex; justify-content: flex-end; width: 100%; gap: 12px">
-            <t-button variant="outline" @click="visible = false">取消</t-button>
-            <t-button theme="primary" type="submit">提交预约</t-button>
-          </div>
-        </t-form-item>
       </t-form>
     </t-dialog>
 
@@ -103,8 +99,10 @@
     <t-dialog
       v-model:visible="viewVisible"
       header="预约详情"
-      :footer="false"
+      :confirm-btn="{ content: '确定', variant: 'base' }"
+      :cancel-btn="null"
       width="min(500px, 95%)"
+      @confirm="viewVisible = false"
     >
       <t-descriptions :column="1" bordered v-if="currentBooking">
         <t-descriptions-item label="编号">{{ currentBooking.id }}</t-descriptions-item>
@@ -120,9 +118,6 @@
         </t-descriptions-item>
         <t-descriptions-item label="备注">{{ currentBooking.remark || '-' }}</t-descriptions-item>
       </t-descriptions>
-      <div style="margin-top: 24px; display: flex; justify-content: flex-end">
-        <t-button theme="primary" @click="viewVisible = false">确定</t-button>
-      </div>
     </t-dialog>
   </div>
 </template>
@@ -213,6 +208,8 @@ watch(bookingData, (newData) => {
 
 // 对话框相关
 const visible = ref(false);
+const submitLoading = ref(false);
+const form = ref<any>(null);
 const viewVisible = ref(false);
 const currentBooking = ref<any>(null);
 
@@ -254,6 +251,7 @@ const onSubmit = async ({ validateResult, firstError }: any) => {
       return;
     }
 
+    submitLoading.value = true;
     try {
       await $fetch('/api/bookings', {
         method: 'POST',
@@ -282,6 +280,8 @@ const onSubmit = async ({ validateResult, firstError }: any) => {
       });
     } catch (error: any) {
       MessagePlugin.error(error.data?.statusMessage || '提交失败');
+    } finally {
+      submitLoading.value = false;
     }
   } else {
     MessagePlugin.error(firstError);

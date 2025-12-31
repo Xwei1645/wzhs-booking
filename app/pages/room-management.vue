@@ -1,20 +1,21 @@
 <template>
   <div class="page-container">
-    <t-card title="场地管理" :bordered="false" class="content-card">
-      <template #actions>
-        <div class="header-actions">
-          <t-input-adornment>
-            <t-input v-model="searchQuery" placeholder="搜索场地名称/地点" clearable />
-            <template #append>
-              <t-button theme="primary" @click="handleAdd">
-                <template #icon><add-icon /></template>
-                新增场地
-              </t-button>
-            </template>
-          </t-input-adornment>
-        </div>
-      </template>
+    <div class="page-header">
+      <h2 class="page-title">场地管理</h2>
+      <div class="header-actions">
+        <t-input-adornment>
+          <t-input v-model="searchQuery" placeholder="搜索场地名称/地点" clearable />
+          <template #append>
+            <t-button theme="primary" @click="handleAdd">
+              <template #icon><add-icon /></template>
+              新增场地
+            </t-button>
+          </template>
+        </t-input-adornment>
+      </div>
+    </div>
 
+    <t-card :bordered="false" class="content-card">
       <t-table
         row-key="id"
         :data="filteredRooms"

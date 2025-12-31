@@ -1,6 +1,9 @@
 <template>
-  <div class="p-6">
-    <t-card title="调试工具" :bordered="true">
+  <div class="page-container">
+    <div class="page-header">
+      <h2 class="page-title">调试工具</h2>
+    </div>
+    <t-card :bordered="false" class="content-card">
       <div class="flex flex-col gap-4">
         <p class="text-gray-500">此页面仅在开发环境可见，用于快速测试和数据初始化。</p>
         

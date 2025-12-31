@@ -37,6 +37,10 @@
             <template #icon><assignment-icon /></template>
             预约审批
           </t-menu-item>
+          <t-menu-item v-if="isAdmin" value="/auto-approval" to="/auto-approval">
+            <template #icon><control-platform-icon /></template>
+            自动审批规则
+          </t-menu-item>
           <t-menu-item v-if="isAdmin" value="/room-management" to="/room-management">
             <template #icon><location-icon /></template>
             场地管理
@@ -63,9 +67,6 @@
         <t-content class="app-content">
           <slot />
         </t-content>
-        <t-footer class="app-footer">
-          ©Xwei1645 2025 All Rights Reserved.
-        </t-footer>
       </t-layout>
     </t-layout>
 
@@ -100,11 +101,12 @@
     <t-dialog
       v-model:visible="passwordVisible"
       header="修改密码"
-      :footer="false"
+      :confirm-btn="{ content: '确认修改', loading: passwordLoading }"
       width="min(450px, 95%)"
+      @confirm="() => passwordFormRef?.submit()"
     >
       <div style="padding: 10px 0">
-        <t-form :data="passwordData" :rules="passwordRules" label-align="top" @submit="onPasswordSubmit">
+        <t-form ref="passwordFormRef" :data="passwordData" :rules="passwordRules" label-align="top" @submit="onPasswordSubmit">
           <t-form-item label="旧密码" name="oldPassword">
             <t-input v-model="passwordData.oldPassword" type="password" placeholder="请输入旧密码" />
           </t-form-item>
@@ -113,11 +115,6 @@
           </t-form-item>
           <t-form-item label="确认新密码" name="confirmPassword">
             <t-input v-model="passwordData.confirmPassword" type="password" placeholder="请再次输入新密码" />
-          </t-form-item>
-          <t-form-item style="margin-top: 24px">
-            <div style="display: flex; justify-content: flex-end; width: 100%">
-              <t-button theme="primary" type="submit" :loading="passwordLoading">确认修改</t-button>
-            </div>
           </t-form-item>
         </t-form>
       </div>
@@ -128,7 +125,7 @@
 <script setup lang="ts">
 import { onMounted, ref, reactive } from 'vue';
 import { MessagePlugin } from 'tdesign-vue-next';
-import { HomeIcon, UserSettingIcon, LogoutIcon, UsergroupIcon, AssignmentIcon, LocationIcon, InfoCircleIcon, BugIcon, CalendarIcon } from 'tdesign-icons-vue-next';
+import { HomeIcon, UserSettingIcon, LogoutIcon, UsergroupIcon, AssignmentIcon, LocationIcon, InfoCircleIcon, BugIcon, CalendarIcon, ControlPlatformIcon } from 'tdesign-icons-vue-next';
 
 const route = useRoute();
 const router = useRouter();
@@ -159,6 +156,7 @@ const isAdmin = computed(() => {
 const profileVisible = ref(false);
 const passwordVisible = ref(false);
 const passwordLoading = ref(false);
+const passwordFormRef = ref<any>(null);
 
 const profileData = reactive({
   id: null as number | null,
@@ -288,6 +286,7 @@ const handleMenuClick = (value: any) => {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: #fff;
 }
 
 .app-layout > .t-layout {
@@ -355,7 +354,7 @@ const handleMenuClick = (value: any) => {
 .app-content {
   padding: 0;
   background-color: var(--td-bg-color-page);
-  overflow: hidden;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -365,7 +364,6 @@ const handleMenuClick = (value: any) => {
   flex: 1;
   min-width: 0;
   min-height: 0;
-  overflow: hidden;
 }
 
 /* 全局卡片样式统一 */
@@ -376,7 +374,22 @@ const handleMenuClick = (value: any) => {
   gap: 16px;
   margin: 0 auto;
   width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--td-text-color-primary);
 }
 
 .content-card {
@@ -407,9 +420,12 @@ const handleMenuClick = (value: any) => {
   white-space: nowrap;
 }
 
-/* 移除默认 margin */
-body {
+/* 移除默认 margin 并防止全屏滚动 */
+body, html {
   margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
 .app-footer {

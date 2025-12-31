@@ -119,7 +119,7 @@ const onSubmit = async ({ validateResult, firstError }: any) => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, var(--td-brand-color-light) 0%, var(--td-bg-color-page) 100%);
+  background: var(--td-bg-color-page);
   position: relative;
 }
 
@@ -127,7 +127,7 @@ const onSubmit = async ({ validateResult, firstError }: any) => {
   width: 90%;
   max-width: 400px;
   padding: 40px;
-  background: #fff;
+  background: var(--td-bg-color-container);
   border-radius: var(--td-radius-large);
   box-shadow: var(--td-shadow-2);
   box-sizing: border-box;

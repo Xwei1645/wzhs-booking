@@ -1,20 +1,21 @@
 <template>
   <div class="page-container">
-    <t-card title="用户管理" :bordered="false" class="content-card">
-      <template #actions>
-        <div class="header-actions">
-          <t-input-adornment>
-            <t-input v-model="searchQuery" placeholder="搜索用户名/姓名" clearable />
-            <template #append>
-              <t-button theme="primary" @click="handleAddUser">
-                <template #icon><add-icon /></template>
-                新增用户
-              </t-button>
-            </template>
-          </t-input-adornment>
-        </div>
-      </template>
+    <div class="page-header">
+      <h2 class="page-title">用户管理</h2>
+      <div class="header-actions">
+        <t-input-adornment>
+          <t-input v-model="searchQuery" placeholder="搜索用户名/姓名" clearable />
+          <template #append>
+            <t-button theme="primary" @click="handleAddUser">
+              <template #icon><add-icon /></template>
+              新增用户
+            </t-button>
+          </template>
+        </t-input-adornment>
+      </div>
+    </div>
 
+    <t-card :bordered="false" class="content-card">
       <t-table
         row-key="id"
         :data="filteredUserData"
@@ -59,10 +60,11 @@
     <t-dialog
       v-model:visible="dialogVisible"
       :header="dialogTitle"
-      :footer="false"
+      :confirm-btn="{ content: '确定', loading: submitLoading }"
       width="min(500px, 95%)"
+      @confirm="() => formRef?.submit()"
     >
-      <t-form :data="formData" :rules="rules" label-align="top" @submit="onFormSubmit">
+      <t-form ref="formRef" :data="formData" :rules="rules" label-align="top" @submit="onFormSubmit">
         <t-form-item label="用户名" name="account">
           <t-input v-model="formData.account" placeholder="请输入登录用户名" :disabled="isEdit" />
         </t-form-item>
@@ -84,12 +86,6 @@
             <t-option v-for="org in organizations" :key="org.id" :label="org.name" :value="org.id" />
           </t-select>
         </t-form-item>
-        <t-form-item style="margin-top: 32px">
-          <div style="display: flex; justify-content: flex-end; width: 100%; gap: 12px">
-            <t-button variant="outline" @click="dialogVisible = false">取消</t-button>
-            <t-button theme="primary" type="submit">确定</t-button>
-          </div>
-        </t-form-item>
       </t-form>
     </t-dialog>
 
@@ -97,18 +93,13 @@
     <t-dialog
       v-model:visible="resetVisible"
       header="重置密码"
-      :footer="false"
+      :confirm-btn="{ content: '确定重置', loading: resetLoading }"
       width="min(400px, 95%)"
+      @confirm="() => resetFormRef?.submit()"
     >
-      <t-form :data="resetData" :rules="resetRules" label-align="top" @submit="onResetSubmit">
+      <t-form ref="resetFormRef" :data="resetData" :rules="resetRules" label-align="top" @submit="onResetSubmit">
         <t-form-item label="新密码" name="newPassword">
           <t-input v-model="resetData.newPassword" type="password" placeholder="请输入新密码" />
-        </t-form-item>
-        <t-form-item style="margin-top: 24px">
-          <div style="display: flex; justify-content: flex-end; width: 100%; gap: 12px">
-            <t-button variant="outline" @click="resetVisible = false">取消</t-button>
-            <t-button theme="primary" type="submit">确定重置</t-button>
-          </div>
         </t-form-item>
       </t-form>
     </t-dialog>
@@ -203,6 +194,8 @@ const getRoleTheme = (role: string) => {
 
 // 表单逻辑
 const dialogVisible = ref(false);
+const submitLoading = ref(false);
+const formRef = ref<any>(null);
 const isEdit = ref(false);
 const dialogTitle = computed(() => isEdit.value ? '编辑用户' : '新增用户');
 const formData = reactive({
@@ -223,6 +216,8 @@ const rules: FormRules = {
 
 // 重置密码逻辑
 const resetVisible = ref(false);
+const resetLoading = ref(false);
+const resetFormRef = ref<any>(null);
 const resetData = reactive({
   id: null as number | null,
   account: '',
@@ -247,6 +242,7 @@ const handleEdit = (row: any) => {
 
 const onFormSubmit = async ({ validateResult, firstError }: any) => {
   if (validateResult === true) {
+    submitLoading.value = true;
     try {
       if (isEdit.value && formData.id !== null) {
         await $fetch('/api/users/update', {
@@ -255,7 +251,7 @@ const onFormSubmit = async ({ validateResult, firstError }: any) => {
             id: formData.id,
             name: formData.name,
             role: formData.role,
-            status: true // 保持当前状态或根据需要修改
+            organizationIds: formData.organizationIds
           }
         });
         MessagePlugin.success('修改成功');
@@ -266,7 +262,8 @@ const onFormSubmit = async ({ validateResult, firstError }: any) => {
             account: formData.account,
             name: formData.name,
             password: formData.password,
-            role: formData.role
+            role: formData.role,
+            organizationIds: formData.organizationIds
           }
         });
         MessagePlugin.success('新增成功');
@@ -275,6 +272,8 @@ const onFormSubmit = async ({ validateResult, firstError }: any) => {
       dialogVisible.value = false;
     } catch (error: any) {
       MessagePlugin.error(error.data?.statusMessage || '操作失败');
+    } finally {
+      submitLoading.value = false;
     }
   } else {
     MessagePlugin.error(firstError);
@@ -309,6 +308,7 @@ const handleResetPassword = (row: any) => {
 
 const onResetSubmit = async ({ validateResult, firstError }: any) => {
   if (validateResult === true) {
+    resetLoading.value = true;
     try {
       await $fetch(`/api/users/${resetData.id}/reset-password`, {
         method: 'POST',
@@ -318,6 +318,8 @@ const onResetSubmit = async ({ validateResult, firstError }: any) => {
       resetVisible.value = false;
     } catch (error: any) {
       MessagePlugin.error('重置失败');
+    } finally {
+      resetLoading.value = false;
     }
   } else {
     MessagePlugin.error(firstError);

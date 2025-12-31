@@ -1,6 +1,9 @@
 <template>
   <div class="page-container">
-    <t-card title="关于" :bordered="false" class="content-card">
+    <div class="page-header">
+      <h2 class="page-title">关于</h2>
+    </div>
+    <t-card :bordered="false" class="content-card">
       <div class="about-content">
         <div class="section">
           <div class="section-title">项目简介</div>
@@ -83,17 +86,17 @@
 }
 
 .section-text {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.8;
-  color: var(--td-text-color-secondary);
+  color: var(--td-text-color-primary);
   margin: 0;
 }
 
 .tech-bullet-list {
   padding-left: 20px;
   margin: 0;
-  color: var(--td-text-color-secondary);
-  font-size: 14px;
+  color: var(--td-text-color-primary);
+  font-size: 16px;
   line-height: 2;
 }
 
