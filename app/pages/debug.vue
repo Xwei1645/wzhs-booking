@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { MessagePlugin, DialogPlugin } from 'tdesign-vue-next'
+useHead({ title: '调试' })
 
 // 仅开发环境可用
 if (!import.meta.env.DEV) {

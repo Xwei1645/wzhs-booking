@@ -7,7 +7,7 @@
           <t-input v-model="searchQuery" placeholder="搜索用户名/姓名" clearable variant="filled" />
           <template #append>
             <t-button theme="primary" @click="handleAddUser">
-              <template #icon><add-icon /></template>
+              <template #icon><t-icon name="add" /></template>
               新增用户
             </t-button>
           </template>
@@ -39,7 +39,7 @@
           </t-space>
         </template>
         <template #status="{ row }">
-          <t-switch v-model="row.status" :label="['启用', '禁用']" @change="(val: boolean) => handleStatusChange(row, val)" />
+          <t-switch v-model="row.status" :label="['启用', '禁用']" @change="(val: any) => handleStatusChange(row, val)" />
         </template>
         <template #op="{ row }">
           <t-link theme="primary" hover="color" style="margin-right: 16px" @click="handleEdit(row)">编辑</t-link>
@@ -108,8 +108,9 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue';
-import { MessagePlugin, DialogPlugin, type PrimaryTableCol, type FormRules } from 'tdesign-vue-next';
-import { AddIcon } from 'tdesign-icons-vue-next';
+import type { PrimaryTableCol, FormRules } from 'tdesign-vue-next';
+
+useHead({ title: '用户管理' })
 
 interface User {
   id: number;

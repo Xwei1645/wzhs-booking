@@ -75,9 +75,10 @@
 </template>
 
 <script setup lang="ts">
-import { MessagePlugin, type PrimaryTableCol } from 'tdesign-vue-next'
-import { AddIcon } from 'tdesign-icons-vue-next'
+import type { PrimaryTableCol } from 'tdesign-vue-next'
 import { formatBookingTime, formatDateTime } from '~/utils/format'
+
+useHead({ title: '预约审批' })
 
 const loading = ref(false)
 const bookings = ref<any[]>([])

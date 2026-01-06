@@ -2,7 +2,7 @@
   <t-layout class="app-layout">
     <t-header class="app-header">
       <div class="logo-container">
-        <span class="logo-text">Lattice Campus | 温州中学场地预约系统</span>
+        <span class="logo-text">WZHS Booking</span>
       </div>
       <t-head-menu theme="light" value="item1" class="header-menu">
         <template #operations>
@@ -10,7 +10,9 @@
             <t-tag theme="primary" variant="light" class="role-tag">{{ getRoleName(userInfo?.role) }}</t-tag>
             <t-dropdown trigger="click" @click="handleDropdownClick">
               <t-link theme="default" class="user-name-link">
+                <t-icon name="user-circle" class="user-avatar-icon" />
                 <span class="user-name-text">{{ userInfo?.name }} ({{ userInfo?.account }})</span>
+                <t-icon name="chevron-down" class="chevron-icon" />
               </t-link>
               <t-dropdown-menu>
                 <t-dropdown-item value="profile">个人信息</t-dropdown-item>
@@ -26,39 +28,39 @@
       <t-aside class="app-aside" width="64px">
         <t-menu theme="light" :value="$route.path" collapsed @change="handleMenuClick">
           <t-menu-item value="/" to="/">
-            <template #icon><home-icon /></template>
+            <template #icon><t-icon name="home" /></template>
             首页
           </t-menu-item>
           <t-menu-item value="/overview" to="/overview">
-            <template #icon><calendar-icon /></template>
+            <template #icon><t-icon name="calendar" /></template>
             总览
           </t-menu-item>
           <t-menu-item v-if="isAdmin" value="/booking-management" to="/booking-management">
-            <template #icon><assignment-icon /></template>
+            <template #icon><t-icon name="assignment" /></template>
             预约审批
           </t-menu-item>
           <t-menu-item v-if="isAdmin" value="/auto-approval" to="/auto-approval">
-            <template #icon><control-platform-icon /></template>
+            <template #icon><t-icon name="control-platform" /></template>
             自动审批规则
           </t-menu-item>
           <t-menu-item v-if="isAdmin" value="/room-management" to="/room-management">
-            <template #icon><location-icon /></template>
+            <template #icon><t-icon name="location" /></template>
             场地管理
           </t-menu-item>
           <t-menu-item v-if="isAdmin" value="/account-management" to="/account-management">
-            <template #icon><user-setting-icon /></template>
+            <template #icon><t-icon name="user-setting" /></template>
             用户管理
           </t-menu-item>
           <t-menu-item v-if="isAdmin" value="/organization-management" to="/organization-management">
-            <template #icon><usergroup-icon /></template>
+            <template #icon><t-icon name="usergroup" /></template>
             组织管理
           </t-menu-item>
           <t-menu-item value="/about" to="/about">
-            <template #icon><info-circle-icon /></template>
+            <template #icon><t-icon name="info-circle" /></template>
             关于
           </t-menu-item>
           <t-menu-item v-if="isDev" value="/debug" to="/debug">
-            <template #icon><bug-icon /></template>
+            <template #icon><t-icon name="bug" /></template>
             调试
           </t-menu-item>
         </t-menu>
@@ -124,8 +126,6 @@
 
 <script setup lang="ts">
 import { onMounted, ref, reactive } from 'vue';
-import { MessagePlugin } from 'tdesign-vue-next';
-import { HomeIcon, UserSettingIcon, LogoutIcon, UsergroupIcon, AssignmentIcon, LocationIcon, InfoCircleIcon, BugIcon, CalendarIcon, ControlPlatformIcon } from 'tdesign-icons-vue-next';
 
 const route = useRoute();
 const router = useRouter();
@@ -326,6 +326,21 @@ const handleMenuClick = (value: any) => {
 
 .role-tag {
   margin-right: 4px;
+}
+
+.user-name-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.user-avatar-icon {
+  font-size: 18px;
+  color: var(--td-text-color-secondary);
+}
+
+.chevron-icon {
+  color: var(--td-text-color-placeholder);
 }
 
 .user-name-text {

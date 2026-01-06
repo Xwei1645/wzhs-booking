@@ -2,7 +2,7 @@
   <div class="login-container">
     <div class="login-box">
       <div class="login-header">
-        <h1 class="logo-text">Lattice Campus</h1>
+        <h1 class="logo-text">WZHS Booking</h1>
         <p class="sub-title">温州中学场地预约系统</p>
       </div>
 
@@ -21,7 +21,7 @@
             variant="filled"
           >
             <template #prefix-icon>
-              <user-icon />
+              <t-icon name="user" />
             </template>
           </t-input>
         </t-form-item>
@@ -35,7 +35,7 @@
             variant="filled"
           >
             <template #prefix-icon>
-              <lock-on-icon />
+              <t-icon name="lock-on" />
             </template>
           </t-input>
         </t-form-item>
@@ -67,13 +67,14 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
-import { MessagePlugin, type FormRules } from 'tdesign-vue-next';
-import { UserIcon, LockOnIcon } from 'tdesign-icons-vue-next';
+import type { FormRules } from 'tdesign-vue-next';
 
 // 禁用默认布局
 definePageMeta({
   layout: false,
 });
+
+useHead({ title: '登录' })
 
 const loading = ref(false);
 

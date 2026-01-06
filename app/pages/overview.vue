@@ -17,7 +17,7 @@
           </t-space>
 
           <t-button variant="outline" shape="square" @click="isSwapped = !isSwapped" title="交换行列">
-            <template #icon><swap-icon /></template>
+            <template #icon><t-icon name="swap" /></template>
           </t-button>
 
           <t-space align="center" :size="8">
@@ -176,7 +176,6 @@
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
 import isoWeek from 'dayjs/plugin/isoWeek'
-import { SwapIcon } from 'tdesign-icons-vue-next'
 
 dayjs.extend(isoWeek)
 dayjs.locale('zh-cn')

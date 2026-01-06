@@ -4,7 +4,7 @@
       <h2 class="page-title">我的预约</h2>
       <div class="header-actions">
         <t-button theme="primary" @click="handleCreateBooking">
-          <template #icon><add-icon /></template>
+          <template #icon><t-icon name="add" /></template>
           新建预约
         </t-button>
       </div>
@@ -127,9 +127,10 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, watch, onMounted } from 'vue';
-import { MessagePlugin, type PrimaryTableCol, type FormRules } from 'tdesign-vue-next';
-import { AddIcon } from 'tdesign-icons-vue-next';
+import type { PrimaryTableCol, FormRules } from 'tdesign-vue-next';
 import { formatBookingTime, formatDateTime } from '~/utils/format';
+
+useHead({ title: '我的预约' })
 
 // 表格列定义
 const columns: PrimaryTableCol[] = [

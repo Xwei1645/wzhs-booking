@@ -7,7 +7,7 @@
       </t-space>
       <div class="header-actions">
         <t-button theme="primary" @click="handleAddRule">
-          <template #icon><add-icon /></template>
+          <template #icon><t-icon name="add" /></template>
           新增规则
         </t-button>
       </div>
@@ -110,9 +110,10 @@
 </template>
 
 <script setup lang="ts">
-import { MessagePlugin, type PrimaryTableCol } from 'tdesign-vue-next'
-import { AddIcon } from 'tdesign-icons-vue-next'
+import type { PrimaryTableCol } from 'tdesign-vue-next'
 import { formatDateTime } from '~/utils/format'
+
+useHead({ title: '自动审批规则' })
 
 // 自动审批规则逻辑
 const rules = ref<any[]>([])
