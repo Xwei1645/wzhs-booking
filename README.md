@@ -35,6 +35,14 @@ pnpm install
 </details>
 
 <details>
+<summary><b>PM2 (推荐)</b></summary>
+
+```bash
+npm install -g pm2
+```
+</details>
+
+<details>
 <summary><b>PostgreSQL</b></summary>
 
 1. **安装 PostgreSQL (Ubuntu/Debian)**:
@@ -111,7 +119,11 @@ node seed.js
   ```bash
   pnpm build
   ```
-  然后使用 PM2 启动（推荐）：
+  直接启动：
   ```bash
-  pm2 start .output/server/index.mjs --name wzhs-booking
+  pnpm start
+  ```
+  或者使用 PM2 启动 (推荐)：
+  ```bash
+  pm2 start pnpm --name "wzhs-booking" -- start
   ```

@@ -7,11 +7,13 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "start": "node -r dotenv/config .output/server/index.mjs"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "dayjs": "^1.11.19",
+    "dotenv": "^17.2.3",
     "nuxt": "^4.2.2",
     "tdesign-icons-vue-next": "^0.4.1",
     "tdesign-vue-next": "^1.17.7",
