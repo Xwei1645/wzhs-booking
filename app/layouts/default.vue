@@ -59,7 +59,7 @@
             <template #icon><t-icon name="info-circle" /></template>
             关于
           </t-menu-item>
-          <t-menu-item v-if="isDev" value="/debug" to="/debug">
+          <t-menu-item v-if="showDebug" value="/debug" to="/debug">
             <template #icon><t-icon name="bug" /></template>
             调试
           </t-menu-item>
@@ -131,12 +131,14 @@ const route = useRoute();
 const router = useRouter();
 
 const isDev = import.meta.env.DEV;
+const showDebug = useState('showDebug', () => false);
 
 // 使用响应式对象存储用户信息
 const userInfo = ref<any>(null);
 
 // 在客户端从localStorage加载用户信息
 onMounted(() => {
+  showDebug.value = localStorage.getItem('showDebugMenu') === 'true';
   const userStr = localStorage.getItem('user');
   if (userStr) {
     try {

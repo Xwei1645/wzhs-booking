@@ -1,7 +1,8 @@
 <template>
   <div class="page-container">
-    <div class="page-header">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
       <h2 class="page-title">调试</h2>
+      <t-button variant="outline" @click="handleHide">隐藏调试页面</t-button>
     </div>
     <t-card :bordered="false" class="content-card">
       <div class="debug-content">
@@ -16,13 +17,36 @@
 <script setup lang="ts">
 useHead({ title: '调试' })
 
-// 仅开发环境可用
-if (!import.meta.env.DEV) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: 'Page Not Found',
-    fatal: true
-  })
+const showDebug = useState('showDebug', () => false)
+
+// 允许开发环境或超级管理员访问
+if (import.meta.client) {
+  try {
+    const userStr = localStorage.getItem('user')
+    const user = userStr ? JSON.parse(userStr) : null
+    if (!import.meta.env.DEV && user?.role !== 'super_admin' && localStorage.getItem('showDebugMenu') !== 'true') {
+      throw createError({
+        statusCode: 404,
+        statusMessage: 'Page Not Found',
+        fatal: true
+      })
+    }
+  } catch (e) {
+    if (!import.meta.env.DEV) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: 'Page Not Found',
+        fatal: true
+      })
+    }
+  }
+}
+
+const handleHide = () => {
+  showDebug.value = false
+  localStorage.setItem('showDebugMenu', 'false')
+  MessagePlugin.info('调试页面已隐藏')
+  navigateTo('/about')
 }
 
 const loading = ref(false)
