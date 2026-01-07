@@ -73,7 +73,9 @@ export function getSessionToken(event: H3Event): string | undefined {
 export function setSessionCookie(event: H3Event, token: string): void {
     setCookie(event, SESSION_COOKIE_NAME, token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        // 开发环境下为 false，生产环境下建议开启，但如果未使用 HTTPS 部署则必须为 false
+        // 为了兼容性，这里可以根据请求协议动态判断或通过环境变量控制
+        secure: process.env.NODE_ENV === 'production' && (event.node.req.headers['x-forwarded-proto'] === 'https' || (event.node.req.socket as any).encrypted),
         sameSite: 'lax',
         maxAge: SESSION_MAX_AGE,
         path: '/'

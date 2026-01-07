@@ -37,10 +37,12 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
             // 异步刷新用户信息（不阻塞页面跳转）
             $fetch('/api/auth/me').then(latestUser => {
                 localStorage.setItem('user', JSON.stringify(latestUser))
-            }).catch(() => {
-                // 如果验证失败，说明 session 过期
-                localStorage.removeItem('user')
-                navigateTo('/login')
+            }).catch((err) => {
+                // 仅在 401  Unauthorized 时清理会话，避免网络波动导致自动登出
+                if (err.statusCode === 401) {
+                    localStorage.removeItem('user')
+                    navigateTo('/login')
+                }
             })
         } catch {
             localStorage.removeItem('user')
